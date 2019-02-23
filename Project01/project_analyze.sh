@@ -1,11 +1,19 @@
 #!/bin/bash
-read -p "Do you wish to execute todo.sh or file_count.sh? (Enter file name) " choice
-if [ $choice == 'todo.sh' ]; then
-  ./todo.sh
-fi
-if [ $choice == 'file_count.sh' ]; then
-  ./file_count.sh
-fi
-if [ $choice == 'deltmp.sh' ]; then
-  ./deltmp.sh
-fi
+scripts=("todo.sh" "file_count.sh" "deltmp.sh" "quit")
+select opt in "${scripts[@]}"
+do
+  case $opt in
+    "todo.sh")
+      ./todo.sh
+      ;;
+    "file_count.sh")
+      ./file_count.sh
+      ;;
+    "deltmp.sh")
+      ./deltmp.sh
+      ;;
+    "quit")
+      break
+  esac
+done
+
