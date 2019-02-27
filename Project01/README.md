@@ -6,6 +6,9 @@ displays the size of the directory with graphed results.
 
 ## Installation
 Download the CS1XA3 repository and execute project_analyze.sh from and command line
+#### Dependencies used for Javascript:
+1) JQuery hosted from: https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js
+2) Chart.js hosted from: https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.1.1/Chart.min.js
 
 ## Usage
 You will be prompted for the script you want to run through the select menu, enter the **number** corresponding to
