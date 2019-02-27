@@ -1,7 +1,6 @@
 #!/bin/bash
-current=$(pwd)
+current=$HOME/CS1XA3/public_html
 cd $HOME
-totalSpace=$(du -sg)
 >$current/variable.js
 other=0
 for folder in $(ls -a)
@@ -24,4 +23,4 @@ do
 done
   echo var graphData = [$arrData$other] >> $current/variable.js
   echo var graphLabel = [$arrLabel\"Hidden Files\"] >> $current/variable.js
-  open $current/graph.html
+  echo View your results at "<https://mac1xa3.ca/u/milanovn/>" !!
