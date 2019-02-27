@@ -1,5 +1,5 @@
 #!/bin/bash
-cd ~/CS1XA3/Project01
+cd ~/CS1XA3/
 Html=$(find . -name '*.html' | wc -l)
 JS=$(find . -name '*.js' | wc -l)
 CSS=$(find . -name '*.css' | wc -l)
