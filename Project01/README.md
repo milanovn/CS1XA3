@@ -1,7 +1,8 @@
 # Project 1
 
 ## Description
-Currently, this repository contains two functional scripts for viewing and navigating through files.
+Currently, this repository contains three scripts that display/manipulate files and a custom feature script that
+displays the size of the directory with graphed results.
 
 ## Installation
 Download the CS1XA3 repository and execute project_analyze.sh from and command line
