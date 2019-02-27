@@ -29,7 +29,7 @@ beginning in ".", exlcuding current directory (.) and (..)
 
 
 ## Instruction guide on how to use diskspace.sh
-### 1. Select **deltmp.sh** from select menu
-
+### 1. Select **diskspace.sh** from select menu
+![Alt Text](https://github.com/milanovn/CS1XA3/blob/project01/Project01/Step1.png "Example on how to run diskspace.sh")
 
 ### 2. Navigate to https://mac1xa3.ca/u/milanovn/ to view graphed results. 
