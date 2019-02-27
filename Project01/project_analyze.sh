@@ -1,5 +1,5 @@
 #!/bin/bash
-scripts=("todo.sh" "file_count.sh" "deltmp.sh" "quit")
+scripts=("todo.sh" "file_count.sh" "deltmp.sh" "diskspace.sh" "quit")
 select opt in "${scripts[@]}"
 do
   case $opt in
@@ -11,6 +11,9 @@ do
       ;;
     "deltmp.sh")
       ./deltmp.sh
+      ;;
+    "diskspace.sh")
+      ./diskspace.sh
       ;;
     "quit")
       break
