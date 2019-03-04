@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Disk Usage</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.1.1/Chart.min.js"></script>
+    <script src="variable.js"></script>
+</head>
+<body>
+<h1>Size of USER directory</h1>
+<canvas id="mycanvas" width="1300" height="500"></canvas>
+<script>
+  var chrt = document.getElementById("mycanvas").getContext("2d");
+  var data = {
+      labels: graphLabel,
+      datasets: [
+		{
+            label: "My Second dataset",
+            fillColor: "rgba(0,100,0,0.5)",
+            data: graphData
+        }
+    ]
+};
+
+var myFirstChart = new Chart(chrt).Bar(data);
+</script>
+</body>
+</html>
