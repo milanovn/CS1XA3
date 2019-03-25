@@ -11,10 +11,10 @@ main =
 
 -- MODEL
 type alias Model =
-  { name : String , password : String, postResponse : String, queryString : String}
+  { name : String , password : String, postResponse : String}
 
 init : () -> (Model,Cmd Msg)
-init _ = ({name="",password="",postResponse="",queryString=""},Cmd.none)
+init _ = ({name="",password="",postResponse=""},Cmd.none)
 root = "https://mac1xa3.ca/e/milanovn/"
 -- UPDATE
 type Msg
@@ -22,7 +22,6 @@ type Msg
   | Password String
   | PostResponse (Result Http.Error String)
   | PostButton
-  | OkButton
 
 update : Msg -> Model -> (Model,Cmd Msg)
 update msg model =
@@ -31,17 +30,14 @@ update msg model =
       ({ model | name = name },Cmd.none)
 
     Password password ->
-      ({ model | password = password},Cmd.none)
+      ({ model | password = password },Cmd.none)
 
     PostResponse result ->
       case result of
         Ok val -> ({model | postResponse = val},Cmd.none)
         Err error -> (handleError model error,Cmd.none)
 
-    OkButton -> ({model | queryString="name="++model.name++"&password="++model.password},Cmd.none)
-
-    PostButton -> (model, performPost model.queryString)
-   -- PostButton -> ({model | queryString = "name="++model.name++"&password="++model.password},performPost model.queryString)
+    PostButton -> (model, performPost)
 
 -- VIEW
 view : Model -> Html Msg
@@ -49,7 +45,6 @@ view model =
   div []
     [ viewInput "text" "Name" model.name Name
     , viewInput "text" "Password" model.password Password
-    , button [Html.Events.onClick OkButton] [text "OK"]
     , button [Html.Events.onClick PostButton] [text "Perform POST"]
     , div [] [text ("Post Response: " ++ model.postResponse)]
     ]
@@ -66,9 +61,9 @@ handleError model error =
                 Http.BadStatus status -> {model | postResponse = "Bad status. Status code: "++String.fromInt(status)}
                 Http.BadBody body ->  {model | postResponse = "Bad Body "++body}
 
-performPost : String -> Cmd Msg
-performPost input = Http.post
+performPost : Cmd Msg
+performPost = Http.post
               { url = root ++ "lab7/"
-               ,body = Http.stringBody "application/x-www-form-urlencoded" input
+               ,body = Http.stringBody "application/x-www-form-urlencoded" "name=Jimmy"
                ,expect = Http.expectString PostResponse
               }

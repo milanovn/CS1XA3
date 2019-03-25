@@ -4974,7 +4974,7 @@ var elm$core$Platform$Cmd$batch = _Platform_batch;
 var elm$core$Platform$Cmd$none = elm$core$Platform$Cmd$batch(_List_Nil);
 var author$project$Main$init = function (_n0) {
 	return _Utils_Tuple2(
-		{name: '', password: '', postResponse: '', queryString: ''},
+		{name: '', password: '', postResponse: ''},
 		elm$core$Platform$Cmd$none);
 };
 var author$project$Main$handleError = F2(
@@ -5884,14 +5884,12 @@ var elm$http$Http$post = function (r) {
 		{body: r.body, expect: r.expect, headers: _List_Nil, method: 'POST', timeout: elm$core$Maybe$Nothing, tracker: elm$core$Maybe$Nothing, url: r.url});
 };
 var elm$http$Http$stringBody = _Http_pair;
-var author$project$Main$performPost = function (input) {
-	return elm$http$Http$post(
-		{
-			body: A2(elm$http$Http$stringBody, 'application/x-www-form-urlencoded', input),
-			expect: elm$http$Http$expectString(author$project$Main$PostResponse),
-			url: author$project$Main$root + 'lab7/'
-		});
-};
+var author$project$Main$performPost = elm$http$Http$post(
+	{
+		body: A2(elm$http$Http$stringBody, 'application/x-www-form-urlencoded', 'name=Jimmy&password=Hendrix'),
+		expect: elm$http$Http$expectString(author$project$Main$PostResponse),
+		url: author$project$Main$root + 'lab7/'
+	});
 var author$project$Main$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
@@ -5924,22 +5922,13 @@ var author$project$Main$update = F2(
 						A2(author$project$Main$handleError, model, error),
 						elm$core$Platform$Cmd$none);
 				}
-			case 'OkButton':
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{queryString: 'name=' + (model.name + ('&password=' + model.password))}),
-					elm$core$Platform$Cmd$none);
 			default:
-				return _Utils_Tuple2(
-					model,
-					author$project$Main$performPost(model.queryString));
+				return _Utils_Tuple2(model, author$project$Main$performPost);
 		}
 	});
 var author$project$Main$Name = function (a) {
 	return {$: 'Name', a: a};
 };
-var author$project$Main$OkButton = {$: 'OkButton'};
 var author$project$Main$Password = function (a) {
 	return {$: 'Password', a: a};
 };
@@ -6046,16 +6035,6 @@ var author$project$Main$view = function (model) {
 			[
 				A4(author$project$Main$viewInput, 'text', 'Name', model.name, author$project$Main$Name),
 				A4(author$project$Main$viewInput, 'text', 'Password', model.password, author$project$Main$Password),
-				A2(
-				elm$html$Html$button,
-				_List_fromArray(
-					[
-						elm$html$Html$Events$onClick(author$project$Main$OkButton)
-					]),
-				_List_fromArray(
-					[
-						elm$html$Html$text('OK')
-					])),
 				A2(
 				elm$html$Html$button,
 				_List_fromArray(

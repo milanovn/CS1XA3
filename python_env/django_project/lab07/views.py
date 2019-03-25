@@ -4,7 +4,7 @@ from django.http import HttpResponse
 def authentication(request):
 	name=request.POST.get("name","")
 	password=request.POST.get("password","")
-	if name!="Jimmy" and password!="Hendrix":
+	if name!="Jimmy" or password!="Hendrix":
 		return (HttpResponse("Bad User Name"))
 	else:
 		return (HttpResponse("Cool"))
