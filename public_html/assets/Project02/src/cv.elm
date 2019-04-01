@@ -22,7 +22,7 @@ many applicable topics including Bash scripting, working with Unix environments,
 view : Model -> Html Msg
 view model = div [] [ stylesheet
                     , header [] [h1 [] [text "Nikola Milanovic"]
-                                ,section [] [p [] [text model.intro],p [] [text "Email: milanovn@mcmaster.ca"]]
+                                ,section [] [p [] [text model.intro],p [] [text "Email: milanovn@mcmaster.ca"],a [href "https://mac1xa3.ca/u/milanovn/simpleapp.html"] [text "Elm Web Application"]]
                                 ,a [href "https://github.com/milanovn"] [img [src "img/Git2.png",height 30] []]
                                 ,a [href "https://www.linkedin.com/in/milanovic-n?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base_contact_details%3BOQ1AoCDoQ1SAk%2BSYijtAYQ%3D%3D"] [img [src "img/Linkind.png",height 30] []]
                                 ]
