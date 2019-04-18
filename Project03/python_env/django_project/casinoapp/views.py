@@ -12,9 +12,9 @@ def addUser (request):
 	if given_username!=''and given_password!='': #Add something to check if given combination already exists
 		user=User.objects.create_user(username=given_username,password=given_password)
 		return HttpResponse("Account successfully created")
-	elif given_username='':
+	elif given_username=='':
 		return HttpResponse("Please provide a username")
-	elif given_password='':
+	elif given_password=='':
 		return HttpResponse("Please provide a password")
 def login (request):
 	jsonRequest = json.loads(request.body)
