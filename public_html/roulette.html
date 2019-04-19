@@ -8584,6 +8584,7 @@ var elm$core$Platform$Sub$none = elm$core$Platform$Sub$batch(_List_Nil);
 var author$project$Main$subscriptions = function (model) {
 	return elm$core$Platform$Sub$none;
 };
+var elm$browser$Browser$Navigation$load = _Browser_load;
 var elm$core$Basics$ge = _Utils_ge;
 var author$project$Main$update = F2(
 	function (msg, model) {
@@ -8621,78 +8622,14 @@ var author$project$Main$update = F2(
 				return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 			case 'Black':
 				return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
-			default:
+			case 'Green':
 				return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+			default:
+				return _Utils_Tuple2(
+					model,
+					elm$browser$Browser$Navigation$load('http://mac1xa3.ca/e/milanovn/static/game_menu.html'));
 		}
 	});
-var MacCASOutreach$graphicsvg$GraphicSVG$Circle = function (a) {
-	return {$: 'Circle', a: a};
-};
-var MacCASOutreach$graphicsvg$GraphicSVG$circle = function (r) {
-	return MacCASOutreach$graphicsvg$GraphicSVG$Circle(r);
-};
-var MacCASOutreach$graphicsvg$GraphicSVG$collage = F3(
-	function (w, h, shapes) {
-		return A3(MacCASOutreach$graphicsvg$GraphicSVG$Collage, w, h, shapes);
-	});
-var MacCASOutreach$graphicsvg$GraphicSVG$darkGreen = A4(MacCASOutreach$graphicsvg$GraphicSVG$RGBA, 78, 154, 6, 1);
-var MacCASOutreach$graphicsvg$GraphicSVG$Path = function (a) {
-	return {$: 'Path', a: a};
-};
-var MacCASOutreach$graphicsvg$GraphicSVG$openPolygon = function (ptList) {
-	return MacCASOutreach$graphicsvg$GraphicSVG$Path(ptList);
-};
-var MacCASOutreach$graphicsvg$GraphicSVG$red = A4(MacCASOutreach$graphicsvg$GraphicSVG$RGBA, 204, 0, 0, 1);
-var MacCASOutreach$graphicsvg$GraphicSVG$rotate = F2(
-	function (theta, shape) {
-		return A2(MacCASOutreach$graphicsvg$GraphicSVG$Rotate, theta, shape);
-	});
-var MacCASOutreach$graphicsvg$GraphicSVG$Polygon = function (a) {
-	return {$: 'Polygon', a: a};
-};
-var elm$core$Basics$pi = _Basics_pi;
-var elm$core$Basics$turns = function (angleInTurns) {
-	return (2 * elm$core$Basics$pi) * angleInTurns;
-};
-var MacCASOutreach$graphicsvg$GraphicSVG$wedgeHelper = F2(
-	function (r, cn) {
-		var angle = elm$core$Basics$turns(0.5 * cn);
-		return _Utils_Tuple2(
-			r * elm$core$Basics$cos(angle),
-			r * elm$core$Basics$sin(angle));
-	});
-var MacCASOutreach$graphicsvg$GraphicSVG$wedge = F2(
-	function (r, frac) {
-		var n = ((frac * 360) / 10) + 5;
-		var ni = elm$core$Basics$round(n);
-		var dlta = frac / ni;
-		return MacCASOutreach$graphicsvg$GraphicSVG$Polygon(
-			(frac > 0) ? _Utils_ap(
-				_List_fromArray(
-					[
-						_Utils_Tuple2(0, 0),
-						A2(MacCASOutreach$graphicsvg$GraphicSVG$wedgeHelper, r, -frac)
-					]),
-				_Utils_ap(
-					A2(
-						elm$core$List$map,
-						A2(
-							elm$core$Basics$composeL,
-							A2(
-								elm$core$Basics$composeL,
-								MacCASOutreach$graphicsvg$GraphicSVG$wedgeHelper(r),
-								elm$core$Basics$mul(dlta)),
-							elm$core$Basics$toFloat),
-						A2(elm$core$List$range, -ni, ni)),
-					_List_fromArray(
-						[
-							A2(MacCASOutreach$graphicsvg$GraphicSVG$wedgeHelper, r, frac),
-							_Utils_Tuple2(0, 0)
-						]))) : _List_Nil);
-	});
-var author$project$Main$Black = {$: 'Black'};
-var author$project$Main$Green = {$: 'Green'};
-var author$project$Main$Red = {$: 'Red'};
 var MacCASOutreach$graphicsvg$GraphicSVG$NoLine = {$: 'NoLine'};
 var MacCASOutreach$graphicsvg$GraphicSVG$blank = A4(MacCASOutreach$graphicsvg$GraphicSVG$RGBA, 0, 0, 0, 0);
 var MacCASOutreach$graphicsvg$GraphicSVG$subtract = F2(
@@ -8994,10 +8931,62 @@ var MacCASOutreach$graphicsvg$GraphicSVG$addOutline = F3(
 			}
 		}
 	});
-var MacCASOutreach$graphicsvg$GraphicSVG$green = A4(MacCASOutreach$graphicsvg$GraphicSVG$RGBA, 115, 210, 22, 1);
+var MacCASOutreach$graphicsvg$GraphicSVG$Circle = function (a) {
+	return {$: 'Circle', a: a};
+};
+var MacCASOutreach$graphicsvg$GraphicSVG$circle = function (r) {
+	return MacCASOutreach$graphicsvg$GraphicSVG$Circle(r);
+};
+var MacCASOutreach$graphicsvg$GraphicSVG$collage = F3(
+	function (w, h, shapes) {
+		return A3(MacCASOutreach$graphicsvg$GraphicSVG$Collage, w, h, shapes);
+	});
+var MacCASOutreach$graphicsvg$GraphicSVG$darkGreen = A4(MacCASOutreach$graphicsvg$GraphicSVG$RGBA, 78, 154, 6, 1);
+var MacCASOutreach$graphicsvg$GraphicSVG$grey = A4(MacCASOutreach$graphicsvg$GraphicSVG$RGBA, 211, 215, 207, 1);
 var MacCASOutreach$graphicsvg$GraphicSVG$notifyTap = F2(
 	function (msg, shape) {
 		return A2(MacCASOutreach$graphicsvg$GraphicSVG$Tap, msg, shape);
+	});
+var MacCASOutreach$graphicsvg$GraphicSVG$Path = function (a) {
+	return {$: 'Path', a: a};
+};
+var MacCASOutreach$graphicsvg$GraphicSVG$openPolygon = function (ptList) {
+	return MacCASOutreach$graphicsvg$GraphicSVG$Path(ptList);
+};
+var MacCASOutreach$graphicsvg$GraphicSVG$red = A4(MacCASOutreach$graphicsvg$GraphicSVG$RGBA, 204, 0, 0, 1);
+var MacCASOutreach$graphicsvg$GraphicSVG$rotate = F2(
+	function (theta, shape) {
+		return A2(MacCASOutreach$graphicsvg$GraphicSVG$Rotate, theta, shape);
+	});
+var MacCASOutreach$graphicsvg$GraphicSVG$Face = F8(
+	function (a, b, c, d, e, f, g, h) {
+		return {$: 'Face', a: a, b: b, c: c, d: d, e: e, f: f, g: g, h: h};
+	});
+var MacCASOutreach$graphicsvg$GraphicSVG$Text = F2(
+	function (a, b) {
+		return {$: 'Text', a: a, b: b};
+	});
+var MacCASOutreach$graphicsvg$GraphicSVG$size = F2(
+	function (sze, stencil) {
+		if (stencil.$ === 'Text') {
+			var _n1 = stencil.a;
+			var si = _n1.a;
+			var bo = _n1.b;
+			var i = _n1.c;
+			var u = _n1.d;
+			var s = _n1.e;
+			var sel = _n1.f;
+			var f = _n1.g;
+			var c = _n1.h;
+			var str = stencil.b;
+			return A2(
+				MacCASOutreach$graphicsvg$GraphicSVG$Text,
+				A8(MacCASOutreach$graphicsvg$GraphicSVG$Face, sze, bo, i, u, s, sel, f, c),
+				str);
+		} else {
+			var a = stencil;
+			return a;
+		}
 	});
 var MacCASOutreach$graphicsvg$GraphicSVG$Solid = function (a) {
 	return {$: 'Solid', a: a};
@@ -9005,6 +8994,62 @@ var MacCASOutreach$graphicsvg$GraphicSVG$Solid = function (a) {
 var MacCASOutreach$graphicsvg$GraphicSVG$solid = function (th) {
 	return MacCASOutreach$graphicsvg$GraphicSVG$Solid(th);
 };
+var MacCASOutreach$graphicsvg$GraphicSVG$AlignLeft = {$: 'AlignLeft'};
+var MacCASOutreach$graphicsvg$GraphicSVG$Serif = {$: 'Serif'};
+var MacCASOutreach$graphicsvg$GraphicSVG$text = function (str) {
+	return A2(
+		MacCASOutreach$graphicsvg$GraphicSVG$Text,
+		A8(MacCASOutreach$graphicsvg$GraphicSVG$Face, 12, false, false, false, false, false, MacCASOutreach$graphicsvg$GraphicSVG$Serif, MacCASOutreach$graphicsvg$GraphicSVG$AlignLeft),
+		str);
+};
+var MacCASOutreach$graphicsvg$GraphicSVG$Polygon = function (a) {
+	return {$: 'Polygon', a: a};
+};
+var elm$core$Basics$pi = _Basics_pi;
+var elm$core$Basics$turns = function (angleInTurns) {
+	return (2 * elm$core$Basics$pi) * angleInTurns;
+};
+var MacCASOutreach$graphicsvg$GraphicSVG$wedgeHelper = F2(
+	function (r, cn) {
+		var angle = elm$core$Basics$turns(0.5 * cn);
+		return _Utils_Tuple2(
+			r * elm$core$Basics$cos(angle),
+			r * elm$core$Basics$sin(angle));
+	});
+var MacCASOutreach$graphicsvg$GraphicSVG$wedge = F2(
+	function (r, frac) {
+		var n = ((frac * 360) / 10) + 5;
+		var ni = elm$core$Basics$round(n);
+		var dlta = frac / ni;
+		return MacCASOutreach$graphicsvg$GraphicSVG$Polygon(
+			(frac > 0) ? _Utils_ap(
+				_List_fromArray(
+					[
+						_Utils_Tuple2(0, 0),
+						A2(MacCASOutreach$graphicsvg$GraphicSVG$wedgeHelper, r, -frac)
+					]),
+				_Utils_ap(
+					A2(
+						elm$core$List$map,
+						A2(
+							elm$core$Basics$composeL,
+							A2(
+								elm$core$Basics$composeL,
+								MacCASOutreach$graphicsvg$GraphicSVG$wedgeHelper(r),
+								elm$core$Basics$mul(dlta)),
+							elm$core$Basics$toFloat),
+						A2(elm$core$List$range, -ni, ni)),
+					_List_fromArray(
+						[
+							A2(MacCASOutreach$graphicsvg$GraphicSVG$wedgeHelper, r, frac),
+							_Utils_Tuple2(0, 0)
+						]))) : _List_Nil);
+	});
+var author$project$Main$Back = {$: 'Back'};
+var author$project$Main$Black = {$: 'Black'};
+var author$project$Main$Green = {$: 'Green'};
+var author$project$Main$Red = {$: 'Red'};
+var MacCASOutreach$graphicsvg$GraphicSVG$green = A4(MacCASOutreach$graphicsvg$GraphicSVG$RGBA, 115, 210, 22, 1);
 var author$project$Main$rouletteButtons = F3(
 	function (redB, blackB, greenB) {
 		return A3(
@@ -9186,7 +9231,31 @@ var author$project$Main$body = F2(
 								_Utils_Tuple2(25, crSize),
 								_Utils_Tuple2(0, 450)
 							]))),
-					A3(author$project$Main$rouletteButtons, author$project$Main$Red, author$project$Main$Black, author$project$Main$Green)
+					A3(author$project$Main$rouletteButtons, author$project$Main$Red, author$project$Main$Black, author$project$Main$Green),
+					A3(
+					MacCASOutreach$graphicsvg$GraphicSVG$addOutline,
+					MacCASOutreach$graphicsvg$GraphicSVG$solid(3),
+					MacCASOutreach$graphicsvg$GraphicSVG$black,
+					A2(
+						MacCASOutreach$graphicsvg$GraphicSVG$notifyTap,
+						author$project$Main$Back,
+						A2(
+							MacCASOutreach$graphicsvg$GraphicSVG$move,
+							_Utils_Tuple2(0, -400),
+							A2(
+								MacCASOutreach$graphicsvg$GraphicSVG$filled,
+								MacCASOutreach$graphicsvg$GraphicSVG$grey,
+								A2(MacCASOutreach$graphicsvg$GraphicSVG$rect, 150, 50))))),
+					A2(
+					MacCASOutreach$graphicsvg$GraphicSVG$move,
+					_Utils_Tuple2(-35, -405),
+					A2(
+						MacCASOutreach$graphicsvg$GraphicSVG$filled,
+						MacCASOutreach$graphicsvg$GraphicSVG$black,
+						A2(
+							MacCASOutreach$graphicsvg$GraphicSVG$size,
+							36,
+							MacCASOutreach$graphicsvg$GraphicSVG$text('Back'))))
 				]));
 	});
 var author$project$Main$view = function (model) {

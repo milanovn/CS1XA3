@@ -1,7 +1,7 @@
 import GraphicSVG exposing (..)
 import GraphicSVG.App exposing (..)
 import Browser
-import Browser.Navigation exposing (Key(..))
+import Browser.Navigation exposing (Key(..),load)
 import Url
 
 main : AppWithTick () Model Msg
@@ -16,6 +16,7 @@ type Msg
  | Red
  | Black
  | Green
+ | Back
 
 type alias Model = {rotate:Bool,rotateAmount:Float,time:Float}
 
@@ -50,6 +51,8 @@ update msg model =
         (model,Cmd.none)
       Green ->
         (model,Cmd.none)
+      Back ->
+        (model,load "http://mac1xa3.ca/e/milanovn/static/game_menu.html")
 
 subscriptions model = Sub.none
 
@@ -57,7 +60,7 @@ body ro crSize = collage 1000 1000 [wedge crSize 0.0625 |> filled black |> rotat
                          ,wedge crSize 0.0625 |> filled red |> rotate (degrees 67.5 + ro),wedge crSize 0.0625 |> filled black |> rotate (degrees 90 + ro)
                          ,wedge crSize 0.0625 |> filled red |> rotate (degrees 112.5 + ro),wedge crSize 0.0625 |> filled black |> rotate (degrees 135+ro),wedge crSize 0.0625 |> filled red |> rotate (degrees 157.5+ro),wedge crSize 0.0625 |> filled black |> rotate (degrees 180+ro),wedge crSize 0.0625 |> filled red |> rotate (degrees 202.5+ro)
                          ,wedge crSize 0.0625 |> filled black |> rotate (degrees 225+ro),wedge crSize 0.0625 |> filled red |> rotate (degrees 247.5+ro),wedge crSize 0.0625 |> filled darkGreen |> rotate (degrees 270+ro),wedge crSize 0.0625 |> filled red |> rotate (degrees 292.5+ro),wedge crSize 0.0625 |> filled black |> rotate (degrees 315+ro)
-                         ,wedge crSize 0.0625 |> filled red |> rotate (degrees 337.5+ro),circle 10 |> filled black,openPolygon [(-25,crSize),(25,crSize),(0,450)] |> filled white,rouletteButtons Red Black Green]
-
+                         ,wedge crSize 0.0625 |> filled red |> rotate (degrees 337.5+ro),circle 10 |> filled black,openPolygon [(-25,crSize),(25,crSize),(0,450)] |> filled white,rouletteButtons Red Black Green,rect 150 50 |> filled grey |> move(0,-400) |> notifyTap Back |> addOutline (solid 3) black, text "Back" |> size 36 |> filled black |> move (-35,-405)]
+--Group text and back rectangle together to fix bug.
 rouletteButtons redB blackB greenB= group [rect 150 50 |> filled black |> move (0,-400) |> notifyTap blackB, rect 150 50 |> filled red |> move (150,-400) |> notifyTap redB,rect 150 50 |> filled green |> move (300,-400) |> notifyTap greenB] |> move (-160,850) |> addOutline (solid 3) black
 

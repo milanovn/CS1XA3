@@ -37,7 +37,7 @@ update msg model = case msg of
                         LoginResponse result -> case result of
                                                   Ok "Invalid login" -> ({model|error="Invalid login"},Cmd.none)
                                                   Ok "Authentication Failed" ->({model|error="Authentication Failed"},Cmd.none)
-                                                  Ok _               -> ({model|error="Successfully logged in"},Browser.Navigation.load ("https://mac1xa3.ca/e/milanovn/casinoapp/" ++ "FILL ME IN"))
+                                                  Ok _               -> ({model|error="Successfully logged in"},Browser.Navigation.load ("https://mac1xa3.ca/e/milanovn/" ++ "static/game_menu.html"))
                                                   Err error -> (handleError model error,Cmd.none)
 view : Model -> Html Msg
 view model = div [] [h1 [] [text "Welcome to the Madhouse Casino!"]
