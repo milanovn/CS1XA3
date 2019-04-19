@@ -16,14 +16,18 @@ def addUser (request):
 		return HttpResponse("Please provide a username")
 	elif given_password=='':
 		return HttpResponse("Please provide a password")
-def login (request):
+def login_user(request):
 	jsonRequest = json.loads(request.body)
 	given_username    = jsonRequest.get('username','')
 	given_password    = jsonRequest.get('password','')
 
-	user = authenticate (request,username=given_username,password=given_password)
-	if user is not None:
-		login(request,user)
-		return HttpResponse("Success!")
+	if given_username!='' and given_password!='':
+
+		user = authenticate (request,username=given_username,password=given_password)
+		if user is not None:
+			login(request,user)
+			return HttpResponse("Success!")
+		else:
+			return HttpResponse("Authentication Failed")
 	else:
-		return HttpResponse("Failed!")
+		return HttpResponse("Invalid login")
