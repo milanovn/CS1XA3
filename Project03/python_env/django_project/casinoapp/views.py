@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.http import JsonResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 import json
@@ -33,3 +34,14 @@ def login_user(request):
 			return HttpResponse("Authentication Failed")
 	else:
 		return HttpResponse("Invalid login")
+def player_info(request):
+	if not request.user.is_authenticated:
+		return HttpResponse("Logged out")
+	else:
+	#For DEBUG	response={'username':'admin','points':450,'error':'Success'}
+			response={}
+			response['username']=request.user.username
+			user_id=request.user.id
+			response['points']=Player.objects.filter(user_id=user_id).first().points
+			response['error']="Success"
+			return JsonResponse(response)
