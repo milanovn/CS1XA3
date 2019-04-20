@@ -10,7 +10,7 @@ def addUser (request):
 	given_password =  jsonRequest.get('password','')
 
 	if given_username!=''and given_password!='': #Add something to check if given combination already exists
-		user=User.objects.create_user(username=given_username,password=given_password)
+		user=Player.create_player(username=given_username,password=given_password) #Default points value is 5000
 		return HttpResponse("Account successfully created")
 	elif given_username=='':
 		return HttpResponse("Please provide a username")
