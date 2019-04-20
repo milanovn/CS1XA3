@@ -24,11 +24,12 @@ def login_user(request):
 
 	if given_username!='' and given_password!='':
 
-		user = authenticate (request,username=given_username,password=given_password)
+		user = authenticate(request,username=given_username,password=given_password)
 		if user is not None:
 			login(request,user)
-			return HttpResponse("Success!")
+			return HttpResponse("Success")
 		else:
+		#	return HttpResponse("given_username ++ given_password")
 			return HttpResponse("Authentication Failed")
 	else:
 		return HttpResponse("Invalid login")

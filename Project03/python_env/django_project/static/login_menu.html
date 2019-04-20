@@ -6236,12 +6236,18 @@ var author$project$Main$update = F2(
 									model,
 									{error: 'Authentication Failed'}),
 								elm$core$Platform$Cmd$none);
-						default:
+						case 'Success':
 							return _Utils_Tuple2(
 								_Utils_update(
 									model,
 									{error: 'Successfully logged in'}),
 								elm$browser$Browser$Navigation$load('https://mac1xa3.ca/e/milanovn/' + 'static/game_menu.html'));
+						default:
+							return _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{error: 'ERROR'}),
+								elm$core$Platform$Cmd$none);
 					}
 				} else {
 					var error = result.a;

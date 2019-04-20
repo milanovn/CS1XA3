@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 
 class PlayerManager(models.Manager):
 	def create_player(self,username,password,points):
-		user=User.objects.create_user(username,password)
+		user=User.objects.create_user(username=username,password=password)
 		player=self.create(user=user,points=points)
 		return player
 class Player(models.Model):
