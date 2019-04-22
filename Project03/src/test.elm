@@ -15,7 +15,7 @@ type Msg = LoadRoullete
            | InfoResponse (Result Http.Error Model)
            | Ask
 init : () -> (Model,Cmd Msg)
-init _ = ({username="Nikola",points=1000,error=""},Cmd.none)
+init _ = ({username="",points=0,error=""},requestInfo)
 
 update : Msg -> Model -> (Model,Cmd Msg)
 update msg model = case msg of
