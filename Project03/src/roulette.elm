@@ -3,6 +3,8 @@ import GraphicSVG.App exposing (..)
 import Browser
 import Browser.Navigation exposing (Key(..),load)
 import Url
+import Debug
+import Random
 
 main : AppWithTick () Model Msg
 main =
@@ -13,18 +15,23 @@ type Msg
  | MakeRequest Browser.UrlRequest
  | UrlChange Url.Url
  | Spin
- | Red
+ | Result
  | Black
+ | Red
  | Green
  | Back
+ | Increment Int
+ | Decrement Int
+ | GenerateRandom
+ | GetRandom Float
 
-type alias Model = {rotate:Bool,rotateAmount:Float,time:Float}
+type alias Model = {rotate:Bool,rotateAmount:Float,time:Float,points:Int,betAmount:Int,random:Float,rootAngle:Int,betColor:Int,denyAnimations:Bool}
 
 init : () -> Url.Url -> Key -> (Model, Cmd Msg)
-init flags url key = ({rotate=False,rotateAmount=0,time=0.0}, Cmd.none)
+init flags url key = ({rotate=False,rotateAmount=0,time=0.0,points=0,betAmount=0,random=0.0,rootAngle=0,betColor=0,denyAnimations=False}, Cmd.none)
 
 view : Model -> {title: String, body : Collage Msg}
-view model = {title="roulette",body = body model.rotateAmount 350}
+view model = {title="roulette",body = body model.rotateAmount 350 model.points model.betAmount model.rootAngle} --On server create a custom url and view to retrieve points.
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -32,8 +39,8 @@ update msg model =
       Tick time getKeyState ->
         let start_rotate = model.rotate
         in if start_rotate then
-          if model.time <= 5 then ({model|rotateAmount=model.time*1.5,time=model.time+0.03},Cmd.none)
-          else if model.time >= 5 && model.time <= 7 then ({model|rotateAmount=model.time*1.5,time=model.time+0.009},Cmd.none) else ({model|time=0.0,rotate=False},Cmd.none)
+          if model.time <= 5 then ({model|rotateAmount=model.time*100+model.random,time=model.time+0.03},Cmd.none)
+          else if model.time >= 5 && model.time <= 7 then ({model|rotateAmount=model.time*100+model.random,time=model.time+0.009},Cmd.none) else (update Result ({model|time=0.0,rotate=False,denyAnimations=False,rootAngle= modBy 360 (round model.rotateAmount)}))
           else (model,Cmd.none)
 
       MakeRequest req ->
@@ -43,24 +50,46 @@ update msg model =
           ( model, Cmd.none )
 
       Spin ->
-        ({model|rotate=True,time=0.0},Cmd.none)
-
-      Red ->
-        (model,Cmd.none)
+        if model.denyAnimations then (model,Cmd.none) else ({model|rotate=True,time=0.0,denyAnimations=True},Cmd.none)
+      Result ->
+        case (colorLanded model.rootAngle) of
+          0 -> if model.betColor==0 then ({model|points=model.points+model.betAmount},Cmd.none) else ({model|points=model.points-model.betAmount},Cmd.none)
+          1 -> if model.betColor==1 then ({model|points=model.points+model.betAmount},Cmd.none) else ({model|points=model.points-model.betAmount},Cmd.none)
+          2 -> if model.betColor==2 then ({model|points=model.points+(model.betAmount*4)},Cmd.none) else ({model|points=model.points-model.betAmount},Cmd.none)
+          _ -> (model,Cmd.none)
       Black ->
-        (model,Cmd.none)
+        ({model|betColor=0},Cmd.none)
+      Red ->
+        ({model|betColor=1},Cmd.none)
       Green ->
-        (model,Cmd.none)
+        ({model|betColor=2},Cmd.none)
       Back ->
-        (model,load "http://mac1xa3.ca/e/milanovn/static/game_menu.html")
+        if model.denyAnimations then (model,Cmd.none) else (model,load "http://mac1xa3.ca/e/milanovn/static/game_menu.html")
+      Increment amount -> let i = model.betAmount
+                   in  if model.denyAnimations then (model,Cmd.none) else ({model | betAmount = amount + i},Cmd.none)
+      Decrement amount -> let i = model.betAmount
+                   in if model.denyAnimations then (model,Cmd.none) else ({model | betAmount = i-amount},Cmd.none)
+      --Random
+      GenerateRandom -> if model.denyAnimations then (model,Cmd.none) else (model,Random.generate GetRandom (Random.float 0 360))
+      GetRandom randomFloat -> ({model |random=randomFloat},Cmd.none)
 
 subscriptions model = Sub.none
 
-body ro crSize = collage 1000 1000 [wedge crSize 0.0625 |> filled black |> rotate (degrees 0 + ro),wedge crSize 0.0625 |> filled red |> rotate (degrees 22.5 + ro),wedge crSize 0.0625 |> filled black |> rotate (degrees 45 + ro)
-                         ,wedge crSize 0.0625 |> filled red |> rotate (degrees 67.5 + ro),wedge crSize 0.0625 |> filled black |> rotate (degrees 90 + ro)
-                         ,wedge crSize 0.0625 |> filled red |> rotate (degrees 112.5 + ro),wedge crSize 0.0625 |> filled black |> rotate (degrees 135+ro),wedge crSize 0.0625 |> filled red |> rotate (degrees 157.5+ro),wedge crSize 0.0625 |> filled black |> rotate (degrees 180+ro),wedge crSize 0.0625 |> filled red |> rotate (degrees 202.5+ro)
-                         ,wedge crSize 0.0625 |> filled black |> rotate (degrees 225+ro),wedge crSize 0.0625 |> filled red |> rotate (degrees 247.5+ro),wedge crSize 0.0625 |> filled darkGreen |> rotate (degrees 270+ro),wedge crSize 0.0625 |> filled red |> rotate (degrees 292.5+ro),wedge crSize 0.0625 |> filled black |> rotate (degrees 315+ro)
-                         ,wedge crSize 0.0625 |> filled red |> rotate (degrees 337.5+ro),circle 10 |> filled black,openPolygon [(-25,crSize),(25,crSize),(0,450)] |> filled white,rouletteButtons Red Black Green,rect 150 50 |> filled grey |> move(0,-400) |> notifyTap Back |> addOutline (solid 3) black, text "Back" |> size 36 |> filled black |> move (-35,-405)]
+colorLanded : Int -> Int
+colorLanded rootAngle = let argument = 90 - (modBy 90 rootAngle)
+                        in if rootAngle+90>=247&&rootAngle+90<=270 then 2 else if argument >=(0)&&argument<=22 then 0 else if argument>22&&argument<=45 then 1 else if argument>45&&argument<=67 then 0 else if argument>67&&argument<=90 then 1 else 2
+
+body ro crSize points betAmount rootAngle = collage 1000 1000 [wedge crSize 0.0625 |> filled black |> rotate (degrees 0 + (degrees (ro+11.25))),wedge crSize 0.0625 |> filled red |> rotate (degrees 22.5 + (degrees (ro+11.25))),wedge crSize 0.0625 |> filled black |> rotate (degrees 45 + (degrees (ro+11.25)))
+                         ,wedge crSize 0.0625 |> filled red |> rotate (degrees 67.5 + (degrees (ro+11.25))),wedge crSize 0.0625 |> filled black |> rotate (degrees 90 + (degrees (ro+11.25)))
+                         ,wedge crSize 0.0625 |> filled red |> rotate (degrees 112.5 + (degrees (ro+11.25))),wedge crSize 0.0625 |> filled black |> rotate (degrees 135+(degrees (ro+11.25))),wedge crSize 0.0625 |> filled red |> rotate (degrees 157.5+(degrees (ro+11.25))),wedge crSize 0.0625 |> filled black |> rotate (degrees 180+(degrees (ro+11.25))),wedge crSize 0.0625 |> filled red |> rotate (degrees 202.5+(degrees (ro+11.25)))
+                         ,wedge crSize 0.0625 |> filled black |> rotate (degrees 225+(degrees (ro+11.25))),wedge crSize 0.0625 |> filled red |> rotate (degrees 247.5+(degrees (ro+11.25))),wedge crSize 0.0625 |> filled darkGreen |> rotate (degrees 270+(degrees (ro+11.25))),wedge crSize 0.0625 |> filled red |> rotate (degrees 292.5+(degrees (ro+11.25))),wedge crSize 0.0625 |> filled black |> rotate (degrees 315+(degrees (ro+11.25)))
+                         ,wedge crSize 0.0625 |> filled red |> rotate (degrees 337.5+(degrees (ro+11.25))),circle 10 |> filled black,openPolygon [(-25,crSize),(25,crSize),(0,300)] |> filled blue,rouletteButtons,rect 150 50 |> filled grey |> move(0,-400) |> notifyTap Back |> addOutline (solid 3) black, text "Back" |> size 36 |> filled black |> move (-35,-405)
+                         ,text ("Points: " ++ Debug.toString(points)++"  "++Debug.toString(rootAngle)) |> size 36 |> filled blue |> addOutline (solid 0.5) black |> move (200,340)
+                         ,betButtons betAmount |> move (-125,390)
+                         ]
 --Group text and back rectangle together to fix bug.
-rouletteButtons redB blackB greenB= group [rect 150 50 |> filled black |> move (0,-400) |> notifyTap blackB, rect 150 50 |> filled red |> move (150,-400) |> notifyTap redB,rect 150 50 |> filled green |> move (300,-400) |> notifyTap greenB] |> move (-160,850) |> addOutline (solid 3) black
+rouletteButtons = group [rect 150 50 |> filled black |> move (0,-400) |>notifyTap Black |> notifyTap GenerateRandom |> notifyTap Spin, rect 150 50 |> filled red |> move (150,-400) |> notifyTap Red |> notifyTap GenerateRandom |> notifyTap Spin,rect 150 50 |> filled green |> move (300,-400) |>notifyTap Green |> notifyTap GenerateRandom |> notifyTap Spin] |> move (-160,850) |> addOutline (solid 3) black
+
+betButtons betAmount = group [group [square 50 |> filled black |> addOutline (solid 3) red,line (0,-10)(0,10) |> outlined (solid 3) red,line (-10,0) (10,0) |> outlined (solid 3) red] |> notifyTap (Increment 100),
+                                           text (Debug.toString betAmount) |> size 30 |> filled black |> addOutline (solid 0.5) red |> move (30,0),group [square 50 |> filled black |> addOutline (solid 3) red,line (-10,0) (10,0) |> outlined (solid 3) red,line (-10,0) (10,0) |> outlined (solid 3) red]|> move (250,0) |> notifyTap (Decrement 100)]
 

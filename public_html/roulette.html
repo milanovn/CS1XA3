@@ -4366,6 +4366,43 @@ function _Time_getZoneName()
 		callback(_Scheduler_succeed(name));
 	});
 }
+
+
+
+var _Bitwise_and = F2(function(a, b)
+{
+	return a & b;
+});
+
+var _Bitwise_or = F2(function(a, b)
+{
+	return a | b;
+});
+
+var _Bitwise_xor = F2(function(a, b)
+{
+	return a ^ b;
+});
+
+function _Bitwise_complement(a)
+{
+	return ~a;
+};
+
+var _Bitwise_shiftLeftBy = F2(function(offset, a)
+{
+	return a << offset;
+});
+
+var _Bitwise_shiftRightBy = F2(function(offset, a)
+{
+	return a >> offset;
+});
+
+var _Bitwise_shiftRightZfBy = F2(function(offset, a)
+{
+	return a >>> offset;
+});
 var MacCASOutreach$graphicsvg$GraphicSVG$Graphics = function (a) {
 	return {$: 'Graphics', a: a};
 };
@@ -8577,57 +8614,282 @@ var author$project$Main$UrlChange = function (a) {
 var author$project$Main$init = F3(
 	function (flags, url, key) {
 		return _Utils_Tuple2(
-			{rotate: false, rotateAmount: 0, time: 0.0},
+			{betAmount: 0, betColor: 0, denyAnimations: false, points: 0, random: 0.0, rootAngle: 0, rotate: false, rotateAmount: 0, time: 0.0},
 			elm$core$Platform$Cmd$none);
 	});
 var elm$core$Platform$Sub$none = elm$core$Platform$Sub$batch(_List_Nil);
 var author$project$Main$subscriptions = function (model) {
 	return elm$core$Platform$Sub$none;
 };
-var elm$browser$Browser$Navigation$load = _Browser_load;
+var author$project$Main$GetRandom = function (a) {
+	return {$: 'GetRandom', a: a};
+};
+var author$project$Main$Result = {$: 'Result'};
 var elm$core$Basics$ge = _Utils_ge;
+var author$project$Main$colorLanded = function (rootAngle) {
+	var argument = 90 - A2(elm$core$Basics$modBy, 90, rootAngle);
+	return (((rootAngle + 90) >= 247) && ((rootAngle + 90) <= 270)) ? 2 : (((argument >= 0) && (argument <= 22)) ? 0 : (((argument > 22) && (argument <= 45)) ? 1 : (((argument > 45) && (argument <= 67)) ? 0 : (((argument > 67) && (argument <= 90)) ? 1 : 2))));
+};
+var elm$browser$Browser$Navigation$load = _Browser_load;
+var elm$core$Basics$abs = function (n) {
+	return (n < 0) ? (-n) : n;
+};
+var elm$core$Bitwise$and = _Bitwise_and;
+var elm$random$Random$Generator = function (a) {
+	return {$: 'Generator', a: a};
+};
+var elm$core$Bitwise$shiftRightZfBy = _Bitwise_shiftRightZfBy;
+var elm$random$Random$Seed = F2(
+	function (a, b) {
+		return {$: 'Seed', a: a, b: b};
+	});
+var elm$random$Random$next = function (_n0) {
+	var state0 = _n0.a;
+	var incr = _n0.b;
+	return A2(elm$random$Random$Seed, ((state0 * 1664525) + incr) >>> 0, incr);
+};
+var elm$core$Bitwise$xor = _Bitwise_xor;
+var elm$random$Random$peel = function (_n0) {
+	var state = _n0.a;
+	var word = (state ^ (state >>> ((state >>> 28) + 4))) * 277803737;
+	return ((word >>> 22) ^ word) >>> 0;
+};
+var elm$random$Random$float = F2(
+	function (a, b) {
+		return elm$random$Random$Generator(
+			function (seed0) {
+				var seed1 = elm$random$Random$next(seed0);
+				var range = elm$core$Basics$abs(b - a);
+				var n1 = elm$random$Random$peel(seed1);
+				var n0 = elm$random$Random$peel(seed0);
+				var lo = (134217727 & n1) * 1.0;
+				var hi = (67108863 & n0) * 1.0;
+				var val = ((hi * 1.34217728e8) + lo) / 9.007199254740992e15;
+				var scaled = (val * range) + a;
+				return _Utils_Tuple2(
+					scaled,
+					elm$random$Random$next(seed1));
+			});
+	});
+var elm$random$Random$Generate = function (a) {
+	return {$: 'Generate', a: a};
+};
+var elm$random$Random$initialSeed = function (x) {
+	var _n0 = elm$random$Random$next(
+		A2(elm$random$Random$Seed, 0, 1013904223));
+	var state1 = _n0.a;
+	var incr = _n0.b;
+	var state2 = (state1 + x) >>> 0;
+	return elm$random$Random$next(
+		A2(elm$random$Random$Seed, state2, incr));
+};
+var elm$random$Random$init = A2(
+	elm$core$Task$andThen,
+	function (time) {
+		return elm$core$Task$succeed(
+			elm$random$Random$initialSeed(
+				elm$time$Time$posixToMillis(time)));
+	},
+	elm$time$Time$now);
+var elm$random$Random$step = F2(
+	function (_n0, seed) {
+		var generator = _n0.a;
+		return generator(seed);
+	});
+var elm$random$Random$onEffects = F3(
+	function (router, commands, seed) {
+		if (!commands.b) {
+			return elm$core$Task$succeed(seed);
+		} else {
+			var generator = commands.a.a;
+			var rest = commands.b;
+			var _n1 = A2(elm$random$Random$step, generator, seed);
+			var value = _n1.a;
+			var newSeed = _n1.b;
+			return A2(
+				elm$core$Task$andThen,
+				function (_n2) {
+					return A3(elm$random$Random$onEffects, router, rest, newSeed);
+				},
+				A2(elm$core$Platform$sendToApp, router, value));
+		}
+	});
+var elm$random$Random$onSelfMsg = F3(
+	function (_n0, _n1, seed) {
+		return elm$core$Task$succeed(seed);
+	});
+var elm$random$Random$map = F2(
+	function (func, _n0) {
+		var genA = _n0.a;
+		return elm$random$Random$Generator(
+			function (seed0) {
+				var _n1 = genA(seed0);
+				var a = _n1.a;
+				var seed1 = _n1.b;
+				return _Utils_Tuple2(
+					func(a),
+					seed1);
+			});
+	});
+var elm$random$Random$cmdMap = F2(
+	function (func, _n0) {
+		var generator = _n0.a;
+		return elm$random$Random$Generate(
+			A2(elm$random$Random$map, func, generator));
+	});
+_Platform_effectManagers['Random'] = _Platform_createManager(elm$random$Random$init, elm$random$Random$onEffects, elm$random$Random$onSelfMsg, elm$random$Random$cmdMap);
+var elm$random$Random$command = _Platform_leaf('Random');
+var elm$random$Random$generate = F2(
+	function (tagger, generator) {
+		return elm$random$Random$command(
+			elm$random$Random$Generate(
+				A2(elm$random$Random$map, tagger, generator)));
+	});
 var author$project$Main$update = F2(
 	function (msg, model) {
-		switch (msg.$) {
-			case 'Tick':
-				var time = msg.a;
-				var getKeyState = msg.b;
-				var start_rotate = model.rotate;
-				return start_rotate ? ((model.time <= 5) ? _Utils_Tuple2(
-					_Utils_update(
+		update:
+		while (true) {
+			switch (msg.$) {
+				case 'Tick':
+					var time = msg.a;
+					var getKeyState = msg.b;
+					var start_rotate = model.rotate;
+					if (start_rotate) {
+						if (model.time <= 5) {
+							return _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{rotateAmount: (model.time * 100) + model.random, time: model.time + 3.0e-2}),
+								elm$core$Platform$Cmd$none);
+						} else {
+							if ((model.time >= 5) && (model.time <= 7)) {
+								return _Utils_Tuple2(
+									_Utils_update(
+										model,
+										{rotateAmount: (model.time * 100) + model.random, time: model.time + 9.0e-3}),
+									elm$core$Platform$Cmd$none);
+							} else {
+								var $temp$msg = author$project$Main$Result,
+									$temp$model = _Utils_update(
+									model,
+									{
+										denyAnimations: false,
+										rootAngle: A2(
+											elm$core$Basics$modBy,
+											360,
+											elm$core$Basics$round(model.rotateAmount)),
+										rotate: false,
+										time: 0.0
+									});
+								msg = $temp$msg;
+								model = $temp$model;
+								continue update;
+							}
+						}
+					} else {
+						return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+					}
+				case 'MakeRequest':
+					var req = msg.a;
+					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+				case 'UrlChange':
+					var url = msg.a;
+					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+				case 'Spin':
+					return model.denyAnimations ? _Utils_Tuple2(model, elm$core$Platform$Cmd$none) : _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{denyAnimations: true, rotate: true, time: 0.0}),
+						elm$core$Platform$Cmd$none);
+				case 'Result':
+					var _n1 = author$project$Main$colorLanded(model.rootAngle);
+					switch (_n1) {
+						case 0:
+							return (!model.betColor) ? _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{points: model.points + model.betAmount}),
+								elm$core$Platform$Cmd$none) : _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{points: model.points - model.betAmount}),
+								elm$core$Platform$Cmd$none);
+						case 1:
+							return (model.betColor === 1) ? _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{points: model.points + model.betAmount}),
+								elm$core$Platform$Cmd$none) : _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{points: model.points - model.betAmount}),
+								elm$core$Platform$Cmd$none);
+						case 2:
+							return (model.betColor === 2) ? _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{points: model.points + (model.betAmount * 4)}),
+								elm$core$Platform$Cmd$none) : _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{points: model.points - model.betAmount}),
+								elm$core$Platform$Cmd$none);
+						default:
+							return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+					}
+				case 'Black':
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{betColor: 0}),
+						elm$core$Platform$Cmd$none);
+				case 'Red':
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{betColor: 1}),
+						elm$core$Platform$Cmd$none);
+				case 'Green':
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{betColor: 2}),
+						elm$core$Platform$Cmd$none);
+				case 'Back':
+					return model.denyAnimations ? _Utils_Tuple2(model, elm$core$Platform$Cmd$none) : _Utils_Tuple2(
 						model,
-						{rotateAmount: model.time * 1.5, time: model.time + 3.0e-2}),
-					elm$core$Platform$Cmd$none) : (((model.time >= 5) && (model.time <= 7)) ? _Utils_Tuple2(
-					_Utils_update(
+						elm$browser$Browser$Navigation$load('http://mac1xa3.ca/e/milanovn/static/game_menu.html'));
+				case 'Increment':
+					var amount = msg.a;
+					var i = model.betAmount;
+					return model.denyAnimations ? _Utils_Tuple2(model, elm$core$Platform$Cmd$none) : _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{betAmount: amount + i}),
+						elm$core$Platform$Cmd$none);
+				case 'Decrement':
+					var amount = msg.a;
+					var i = model.betAmount;
+					return model.denyAnimations ? _Utils_Tuple2(model, elm$core$Platform$Cmd$none) : _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{betAmount: i - amount}),
+						elm$core$Platform$Cmd$none);
+				case 'GenerateRandom':
+					return model.denyAnimations ? _Utils_Tuple2(model, elm$core$Platform$Cmd$none) : _Utils_Tuple2(
 						model,
-						{rotateAmount: model.time * 1.5, time: model.time + 9.0e-3}),
-					elm$core$Platform$Cmd$none) : _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{rotate: false, time: 0.0}),
-					elm$core$Platform$Cmd$none))) : _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
-			case 'MakeRequest':
-				var req = msg.a;
-				return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
-			case 'UrlChange':
-				var url = msg.a;
-				return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
-			case 'Spin':
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{rotate: true, time: 0.0}),
-					elm$core$Platform$Cmd$none);
-			case 'Red':
-				return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
-			case 'Black':
-				return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
-			case 'Green':
-				return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
-			default:
-				return _Utils_Tuple2(
-					model,
-					elm$browser$Browser$Navigation$load('http://mac1xa3.ca/e/milanovn/static/game_menu.html'));
+						A2(
+							elm$random$Random$generate,
+							author$project$Main$GetRandom,
+							A2(elm$random$Random$float, 0, 360)));
+				default:
+					var randomFloat = msg.a;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{random: randomFloat}),
+						elm$core$Platform$Cmd$none);
+			}
 		}
 	});
 var MacCASOutreach$graphicsvg$GraphicSVG$NoLine = {$: 'NoLine'};
@@ -8931,6 +9193,7 @@ var MacCASOutreach$graphicsvg$GraphicSVG$addOutline = F3(
 			}
 		}
 	});
+var MacCASOutreach$graphicsvg$GraphicSVG$blue = A4(MacCASOutreach$graphicsvg$GraphicSVG$RGBA, 52, 101, 164, 1);
 var MacCASOutreach$graphicsvg$GraphicSVG$Circle = function (a) {
 	return {$: 'Circle', a: a};
 };
@@ -9046,59 +9309,190 @@ var MacCASOutreach$graphicsvg$GraphicSVG$wedge = F2(
 						]))) : _List_Nil);
 	});
 var author$project$Main$Back = {$: 'Back'};
-var author$project$Main$Black = {$: 'Black'};
-var author$project$Main$Green = {$: 'Green'};
-var author$project$Main$Red = {$: 'Red'};
-var MacCASOutreach$graphicsvg$GraphicSVG$green = A4(MacCASOutreach$graphicsvg$GraphicSVG$RGBA, 115, 210, 22, 1);
-var author$project$Main$rouletteButtons = F3(
-	function (redB, blackB, greenB) {
-		return A3(
-			MacCASOutreach$graphicsvg$GraphicSVG$addOutline,
-			MacCASOutreach$graphicsvg$GraphicSVG$solid(3),
-			MacCASOutreach$graphicsvg$GraphicSVG$black,
-			A2(
-				MacCASOutreach$graphicsvg$GraphicSVG$move,
-				_Utils_Tuple2(-160, 850),
+var MacCASOutreach$graphicsvg$GraphicSVG$line = F2(
+	function (p1, p2) {
+		return MacCASOutreach$graphicsvg$GraphicSVG$Path(
+			_List_fromArray(
+				[p1, p2]));
+	});
+var MacCASOutreach$graphicsvg$GraphicSVG$outlined = F3(
+	function (style, outlineClr, stencil) {
+		var lineStyle = function () {
+			if (style.$ === 'NoLine') {
+				return elm$core$Maybe$Nothing;
+			} else {
+				return elm$core$Maybe$Just(
+					_Utils_Tuple2(style, outlineClr));
+			}
+		}();
+		return A3(MacCASOutreach$graphicsvg$GraphicSVG$Inked, elm$core$Maybe$Nothing, lineStyle, stencil);
+	});
+var MacCASOutreach$graphicsvg$GraphicSVG$square = function (r) {
+	return A2(MacCASOutreach$graphicsvg$GraphicSVG$Rect, r, r);
+};
+var author$project$Main$Decrement = function (a) {
+	return {$: 'Decrement', a: a};
+};
+var author$project$Main$Increment = function (a) {
+	return {$: 'Increment', a: a};
+};
+var elm$core$Debug$toString = _Debug_toString;
+var author$project$Main$betButtons = function (betAmount) {
+	return MacCASOutreach$graphicsvg$GraphicSVG$group(
+		_List_fromArray(
+			[
+				A2(
+				MacCASOutreach$graphicsvg$GraphicSVG$notifyTap,
+				author$project$Main$Increment(100),
 				MacCASOutreach$graphicsvg$GraphicSVG$group(
 					_List_fromArray(
 						[
+							A3(
+							MacCASOutreach$graphicsvg$GraphicSVG$addOutline,
+							MacCASOutreach$graphicsvg$GraphicSVG$solid(3),
+							MacCASOutreach$graphicsvg$GraphicSVG$red,
 							A2(
+								MacCASOutreach$graphicsvg$GraphicSVG$filled,
+								MacCASOutreach$graphicsvg$GraphicSVG$black,
+								MacCASOutreach$graphicsvg$GraphicSVG$square(50))),
+							A3(
+							MacCASOutreach$graphicsvg$GraphicSVG$outlined,
+							MacCASOutreach$graphicsvg$GraphicSVG$solid(3),
+							MacCASOutreach$graphicsvg$GraphicSVG$red,
+							A2(
+								MacCASOutreach$graphicsvg$GraphicSVG$line,
+								_Utils_Tuple2(0, -10),
+								_Utils_Tuple2(0, 10))),
+							A3(
+							MacCASOutreach$graphicsvg$GraphicSVG$outlined,
+							MacCASOutreach$graphicsvg$GraphicSVG$solid(3),
+							MacCASOutreach$graphicsvg$GraphicSVG$red,
+							A2(
+								MacCASOutreach$graphicsvg$GraphicSVG$line,
+								_Utils_Tuple2(-10, 0),
+								_Utils_Tuple2(10, 0)))
+						]))),
+				A2(
+				MacCASOutreach$graphicsvg$GraphicSVG$move,
+				_Utils_Tuple2(30, 0),
+				A3(
+					MacCASOutreach$graphicsvg$GraphicSVG$addOutline,
+					MacCASOutreach$graphicsvg$GraphicSVG$solid(0.5),
+					MacCASOutreach$graphicsvg$GraphicSVG$red,
+					A2(
+						MacCASOutreach$graphicsvg$GraphicSVG$filled,
+						MacCASOutreach$graphicsvg$GraphicSVG$black,
+						A2(
+							MacCASOutreach$graphicsvg$GraphicSVG$size,
+							30,
+							MacCASOutreach$graphicsvg$GraphicSVG$text(
+								elm$core$Debug$toString(betAmount)))))),
+				A2(
+				MacCASOutreach$graphicsvg$GraphicSVG$notifyTap,
+				author$project$Main$Decrement(100),
+				A2(
+					MacCASOutreach$graphicsvg$GraphicSVG$move,
+					_Utils_Tuple2(250, 0),
+					MacCASOutreach$graphicsvg$GraphicSVG$group(
+						_List_fromArray(
+							[
+								A3(
+								MacCASOutreach$graphicsvg$GraphicSVG$addOutline,
+								MacCASOutreach$graphicsvg$GraphicSVG$solid(3),
+								MacCASOutreach$graphicsvg$GraphicSVG$red,
+								A2(
+									MacCASOutreach$graphicsvg$GraphicSVG$filled,
+									MacCASOutreach$graphicsvg$GraphicSVG$black,
+									MacCASOutreach$graphicsvg$GraphicSVG$square(50))),
+								A3(
+								MacCASOutreach$graphicsvg$GraphicSVG$outlined,
+								MacCASOutreach$graphicsvg$GraphicSVG$solid(3),
+								MacCASOutreach$graphicsvg$GraphicSVG$red,
+								A2(
+									MacCASOutreach$graphicsvg$GraphicSVG$line,
+									_Utils_Tuple2(-10, 0),
+									_Utils_Tuple2(10, 0))),
+								A3(
+								MacCASOutreach$graphicsvg$GraphicSVG$outlined,
+								MacCASOutreach$graphicsvg$GraphicSVG$solid(3),
+								MacCASOutreach$graphicsvg$GraphicSVG$red,
+								A2(
+									MacCASOutreach$graphicsvg$GraphicSVG$line,
+									_Utils_Tuple2(-10, 0),
+									_Utils_Tuple2(10, 0)))
+							]))))
+			]));
+};
+var MacCASOutreach$graphicsvg$GraphicSVG$green = A4(MacCASOutreach$graphicsvg$GraphicSVG$RGBA, 115, 210, 22, 1);
+var author$project$Main$Black = {$: 'Black'};
+var author$project$Main$GenerateRandom = {$: 'GenerateRandom'};
+var author$project$Main$Green = {$: 'Green'};
+var author$project$Main$Red = {$: 'Red'};
+var author$project$Main$Spin = {$: 'Spin'};
+var author$project$Main$rouletteButtons = A3(
+	MacCASOutreach$graphicsvg$GraphicSVG$addOutline,
+	MacCASOutreach$graphicsvg$GraphicSVG$solid(3),
+	MacCASOutreach$graphicsvg$GraphicSVG$black,
+	A2(
+		MacCASOutreach$graphicsvg$GraphicSVG$move,
+		_Utils_Tuple2(-160, 850),
+		MacCASOutreach$graphicsvg$GraphicSVG$group(
+			_List_fromArray(
+				[
+					A2(
+					MacCASOutreach$graphicsvg$GraphicSVG$notifyTap,
+					author$project$Main$Spin,
+					A2(
+						MacCASOutreach$graphicsvg$GraphicSVG$notifyTap,
+						author$project$Main$GenerateRandom,
+						A2(
 							MacCASOutreach$graphicsvg$GraphicSVG$notifyTap,
-							blackB,
+							author$project$Main$Black,
 							A2(
 								MacCASOutreach$graphicsvg$GraphicSVG$move,
 								_Utils_Tuple2(0, -400),
 								A2(
 									MacCASOutreach$graphicsvg$GraphicSVG$filled,
 									MacCASOutreach$graphicsvg$GraphicSVG$black,
-									A2(MacCASOutreach$graphicsvg$GraphicSVG$rect, 150, 50)))),
-							A2(
+									A2(MacCASOutreach$graphicsvg$GraphicSVG$rect, 150, 50)))))),
+					A2(
+					MacCASOutreach$graphicsvg$GraphicSVG$notifyTap,
+					author$project$Main$Spin,
+					A2(
+						MacCASOutreach$graphicsvg$GraphicSVG$notifyTap,
+						author$project$Main$GenerateRandom,
+						A2(
 							MacCASOutreach$graphicsvg$GraphicSVG$notifyTap,
-							redB,
+							author$project$Main$Red,
 							A2(
 								MacCASOutreach$graphicsvg$GraphicSVG$move,
 								_Utils_Tuple2(150, -400),
 								A2(
 									MacCASOutreach$graphicsvg$GraphicSVG$filled,
 									MacCASOutreach$graphicsvg$GraphicSVG$red,
-									A2(MacCASOutreach$graphicsvg$GraphicSVG$rect, 150, 50)))),
-							A2(
+									A2(MacCASOutreach$graphicsvg$GraphicSVG$rect, 150, 50)))))),
+					A2(
+					MacCASOutreach$graphicsvg$GraphicSVG$notifyTap,
+					author$project$Main$Spin,
+					A2(
+						MacCASOutreach$graphicsvg$GraphicSVG$notifyTap,
+						author$project$Main$GenerateRandom,
+						A2(
 							MacCASOutreach$graphicsvg$GraphicSVG$notifyTap,
-							greenB,
+							author$project$Main$Green,
 							A2(
 								MacCASOutreach$graphicsvg$GraphicSVG$move,
 								_Utils_Tuple2(300, -400),
 								A2(
 									MacCASOutreach$graphicsvg$GraphicSVG$filled,
 									MacCASOutreach$graphicsvg$GraphicSVG$green,
-									A2(MacCASOutreach$graphicsvg$GraphicSVG$rect, 150, 50))))
-						]))));
-	});
+									A2(MacCASOutreach$graphicsvg$GraphicSVG$rect, 150, 50))))))
+				]))));
 var elm$core$Basics$degrees = function (angleInDegrees) {
 	return (angleInDegrees * elm$core$Basics$pi) / 180;
 };
-var author$project$Main$body = F2(
-	function (ro, crSize) {
+var author$project$Main$body = F5(
+	function (ro, crSize, points, betAmount, rootAngle) {
 		return A3(
 			MacCASOutreach$graphicsvg$GraphicSVG$collage,
 			1000,
@@ -9107,112 +9501,112 @@ var author$project$Main$body = F2(
 				[
 					A2(
 					MacCASOutreach$graphicsvg$GraphicSVG$rotate,
-					elm$core$Basics$degrees(0) + ro,
+					elm$core$Basics$degrees(0) + elm$core$Basics$degrees(ro + 11.25),
 					A2(
 						MacCASOutreach$graphicsvg$GraphicSVG$filled,
 						MacCASOutreach$graphicsvg$GraphicSVG$black,
 						A2(MacCASOutreach$graphicsvg$GraphicSVG$wedge, crSize, 6.25e-2))),
 					A2(
 					MacCASOutreach$graphicsvg$GraphicSVG$rotate,
-					elm$core$Basics$degrees(22.5) + ro,
+					elm$core$Basics$degrees(22.5) + elm$core$Basics$degrees(ro + 11.25),
 					A2(
 						MacCASOutreach$graphicsvg$GraphicSVG$filled,
 						MacCASOutreach$graphicsvg$GraphicSVG$red,
 						A2(MacCASOutreach$graphicsvg$GraphicSVG$wedge, crSize, 6.25e-2))),
 					A2(
 					MacCASOutreach$graphicsvg$GraphicSVG$rotate,
-					elm$core$Basics$degrees(45) + ro,
+					elm$core$Basics$degrees(45) + elm$core$Basics$degrees(ro + 11.25),
 					A2(
 						MacCASOutreach$graphicsvg$GraphicSVG$filled,
 						MacCASOutreach$graphicsvg$GraphicSVG$black,
 						A2(MacCASOutreach$graphicsvg$GraphicSVG$wedge, crSize, 6.25e-2))),
 					A2(
 					MacCASOutreach$graphicsvg$GraphicSVG$rotate,
-					elm$core$Basics$degrees(67.5) + ro,
+					elm$core$Basics$degrees(67.5) + elm$core$Basics$degrees(ro + 11.25),
 					A2(
 						MacCASOutreach$graphicsvg$GraphicSVG$filled,
 						MacCASOutreach$graphicsvg$GraphicSVG$red,
 						A2(MacCASOutreach$graphicsvg$GraphicSVG$wedge, crSize, 6.25e-2))),
 					A2(
 					MacCASOutreach$graphicsvg$GraphicSVG$rotate,
-					elm$core$Basics$degrees(90) + ro,
+					elm$core$Basics$degrees(90) + elm$core$Basics$degrees(ro + 11.25),
 					A2(
 						MacCASOutreach$graphicsvg$GraphicSVG$filled,
 						MacCASOutreach$graphicsvg$GraphicSVG$black,
 						A2(MacCASOutreach$graphicsvg$GraphicSVG$wedge, crSize, 6.25e-2))),
 					A2(
 					MacCASOutreach$graphicsvg$GraphicSVG$rotate,
-					elm$core$Basics$degrees(112.5) + ro,
+					elm$core$Basics$degrees(112.5) + elm$core$Basics$degrees(ro + 11.25),
 					A2(
 						MacCASOutreach$graphicsvg$GraphicSVG$filled,
 						MacCASOutreach$graphicsvg$GraphicSVG$red,
 						A2(MacCASOutreach$graphicsvg$GraphicSVG$wedge, crSize, 6.25e-2))),
 					A2(
 					MacCASOutreach$graphicsvg$GraphicSVG$rotate,
-					elm$core$Basics$degrees(135) + ro,
+					elm$core$Basics$degrees(135) + elm$core$Basics$degrees(ro + 11.25),
 					A2(
 						MacCASOutreach$graphicsvg$GraphicSVG$filled,
 						MacCASOutreach$graphicsvg$GraphicSVG$black,
 						A2(MacCASOutreach$graphicsvg$GraphicSVG$wedge, crSize, 6.25e-2))),
 					A2(
 					MacCASOutreach$graphicsvg$GraphicSVG$rotate,
-					elm$core$Basics$degrees(157.5) + ro,
+					elm$core$Basics$degrees(157.5) + elm$core$Basics$degrees(ro + 11.25),
 					A2(
 						MacCASOutreach$graphicsvg$GraphicSVG$filled,
 						MacCASOutreach$graphicsvg$GraphicSVG$red,
 						A2(MacCASOutreach$graphicsvg$GraphicSVG$wedge, crSize, 6.25e-2))),
 					A2(
 					MacCASOutreach$graphicsvg$GraphicSVG$rotate,
-					elm$core$Basics$degrees(180) + ro,
+					elm$core$Basics$degrees(180) + elm$core$Basics$degrees(ro + 11.25),
 					A2(
 						MacCASOutreach$graphicsvg$GraphicSVG$filled,
 						MacCASOutreach$graphicsvg$GraphicSVG$black,
 						A2(MacCASOutreach$graphicsvg$GraphicSVG$wedge, crSize, 6.25e-2))),
 					A2(
 					MacCASOutreach$graphicsvg$GraphicSVG$rotate,
-					elm$core$Basics$degrees(202.5) + ro,
+					elm$core$Basics$degrees(202.5) + elm$core$Basics$degrees(ro + 11.25),
 					A2(
 						MacCASOutreach$graphicsvg$GraphicSVG$filled,
 						MacCASOutreach$graphicsvg$GraphicSVG$red,
 						A2(MacCASOutreach$graphicsvg$GraphicSVG$wedge, crSize, 6.25e-2))),
 					A2(
 					MacCASOutreach$graphicsvg$GraphicSVG$rotate,
-					elm$core$Basics$degrees(225) + ro,
+					elm$core$Basics$degrees(225) + elm$core$Basics$degrees(ro + 11.25),
 					A2(
 						MacCASOutreach$graphicsvg$GraphicSVG$filled,
 						MacCASOutreach$graphicsvg$GraphicSVG$black,
 						A2(MacCASOutreach$graphicsvg$GraphicSVG$wedge, crSize, 6.25e-2))),
 					A2(
 					MacCASOutreach$graphicsvg$GraphicSVG$rotate,
-					elm$core$Basics$degrees(247.5) + ro,
+					elm$core$Basics$degrees(247.5) + elm$core$Basics$degrees(ro + 11.25),
 					A2(
 						MacCASOutreach$graphicsvg$GraphicSVG$filled,
 						MacCASOutreach$graphicsvg$GraphicSVG$red,
 						A2(MacCASOutreach$graphicsvg$GraphicSVG$wedge, crSize, 6.25e-2))),
 					A2(
 					MacCASOutreach$graphicsvg$GraphicSVG$rotate,
-					elm$core$Basics$degrees(270) + ro,
+					elm$core$Basics$degrees(270) + elm$core$Basics$degrees(ro + 11.25),
 					A2(
 						MacCASOutreach$graphicsvg$GraphicSVG$filled,
 						MacCASOutreach$graphicsvg$GraphicSVG$darkGreen,
 						A2(MacCASOutreach$graphicsvg$GraphicSVG$wedge, crSize, 6.25e-2))),
 					A2(
 					MacCASOutreach$graphicsvg$GraphicSVG$rotate,
-					elm$core$Basics$degrees(292.5) + ro,
+					elm$core$Basics$degrees(292.5) + elm$core$Basics$degrees(ro + 11.25),
 					A2(
 						MacCASOutreach$graphicsvg$GraphicSVG$filled,
 						MacCASOutreach$graphicsvg$GraphicSVG$red,
 						A2(MacCASOutreach$graphicsvg$GraphicSVG$wedge, crSize, 6.25e-2))),
 					A2(
 					MacCASOutreach$graphicsvg$GraphicSVG$rotate,
-					elm$core$Basics$degrees(315) + ro,
+					elm$core$Basics$degrees(315) + elm$core$Basics$degrees(ro + 11.25),
 					A2(
 						MacCASOutreach$graphicsvg$GraphicSVG$filled,
 						MacCASOutreach$graphicsvg$GraphicSVG$black,
 						A2(MacCASOutreach$graphicsvg$GraphicSVG$wedge, crSize, 6.25e-2))),
 					A2(
 					MacCASOutreach$graphicsvg$GraphicSVG$rotate,
-					elm$core$Basics$degrees(337.5) + ro,
+					elm$core$Basics$degrees(337.5) + elm$core$Basics$degrees(ro + 11.25),
 					A2(
 						MacCASOutreach$graphicsvg$GraphicSVG$filled,
 						MacCASOutreach$graphicsvg$GraphicSVG$red,
@@ -9223,15 +9617,15 @@ var author$project$Main$body = F2(
 					MacCASOutreach$graphicsvg$GraphicSVG$circle(10)),
 					A2(
 					MacCASOutreach$graphicsvg$GraphicSVG$filled,
-					MacCASOutreach$graphicsvg$GraphicSVG$white,
+					MacCASOutreach$graphicsvg$GraphicSVG$blue,
 					MacCASOutreach$graphicsvg$GraphicSVG$openPolygon(
 						_List_fromArray(
 							[
 								_Utils_Tuple2(-25, crSize),
 								_Utils_Tuple2(25, crSize),
-								_Utils_Tuple2(0, 450)
+								_Utils_Tuple2(0, 300)
 							]))),
-					A3(author$project$Main$rouletteButtons, author$project$Main$Red, author$project$Main$Black, author$project$Main$Green),
+					author$project$Main$rouletteButtons,
 					A3(
 					MacCASOutreach$graphicsvg$GraphicSVG$addOutline,
 					MacCASOutreach$graphicsvg$GraphicSVG$solid(3),
@@ -9255,12 +9649,31 @@ var author$project$Main$body = F2(
 						A2(
 							MacCASOutreach$graphicsvg$GraphicSVG$size,
 							36,
-							MacCASOutreach$graphicsvg$GraphicSVG$text('Back'))))
+							MacCASOutreach$graphicsvg$GraphicSVG$text('Back')))),
+					A2(
+					MacCASOutreach$graphicsvg$GraphicSVG$move,
+					_Utils_Tuple2(200, 340),
+					A3(
+						MacCASOutreach$graphicsvg$GraphicSVG$addOutline,
+						MacCASOutreach$graphicsvg$GraphicSVG$solid(0.5),
+						MacCASOutreach$graphicsvg$GraphicSVG$black,
+						A2(
+							MacCASOutreach$graphicsvg$GraphicSVG$filled,
+							MacCASOutreach$graphicsvg$GraphicSVG$blue,
+							A2(
+								MacCASOutreach$graphicsvg$GraphicSVG$size,
+								36,
+								MacCASOutreach$graphicsvg$GraphicSVG$text(
+									'Points: ' + (elm$core$Debug$toString(points) + ('  ' + elm$core$Debug$toString(rootAngle)))))))),
+					A2(
+					MacCASOutreach$graphicsvg$GraphicSVG$move,
+					_Utils_Tuple2(-125, 390),
+					author$project$Main$betButtons(betAmount))
 				]));
 	});
 var author$project$Main$view = function (model) {
 	return {
-		body: A2(author$project$Main$body, model.rotateAmount, 350),
+		body: A5(author$project$Main$body, model.rotateAmount, 350, model.points, model.betAmount, model.rootAngle),
 		title: 'roulette'
 	};
 };
