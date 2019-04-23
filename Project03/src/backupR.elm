@@ -5,9 +5,6 @@ import Browser.Navigation exposing (Key(..),load)
 import Url
 import Debug
 import Random
-import Http
-import Json.Decode as JDecode
-import String
 
 main : AppWithTick () Model Msg
 main =
@@ -27,19 +24,11 @@ type Msg
  | Decrement Int
  | GenerateRandom
  | GetRandom Float
- | GetPoints (Result Http.Error String)
 
 type alias Model = {rotate:Bool,rotateAmount:Float,time:Float,points:Int,betAmount:Int,random:Float,rootAngle:Int,betColor:Int,denyAnimations:Bool}
 
 init : () -> Url.Url -> Key -> (Model, Cmd Msg)
-init flags url key = ({rotate=False,rotateAmount=0,time=0.0,points=0,betAmount=0,random=0.0,rootAngle=0,betColor=0,denyAnimations=False},requestInfo {rotate=False,rotateAmount=0,time=0.0,points=0,betAmount=0,random=0.0,rootAngle=0,betColor=0,denyAnimations=False})
-
-requestInfo : Model -> Cmd Msg
-requestInfo model = Http.get{url="https://mac1xa3.ca/e/milanovn/casinoapp/roulettePoints/"
-                            ,expect=Http.expectString GetPoints}
-convertPoints arg = case (String.toInt(arg)) of
-                    Just a -> a
-                    Nothing -> 0
+init flags url key = ({rotate=False,rotateAmount=0,time=0.0,points=0,betAmount=0,random=0.0,rootAngle=0,betColor=0,denyAnimations=False}, Cmd.none)
 
 view : Model -> {title: String, body : Collage Msg}
 view model = {title="roulette",body = body model.rotateAmount 350 model.points model.betAmount model.rootAngle} --On server create a custom url and view to retrieve points.
@@ -59,9 +48,7 @@ update msg model =
 
       UrlChange url ->
           ( model, Cmd.none )
-      GetPoints result -> case result of
-                          Ok response -> ({model|points=convertPoints response},Cmd.none)
-                          Err error -> (model,Cmd.none)
+
       Spin ->
         if model.denyAnimations then (model,Cmd.none) else ({model|rotate=True,time=0.0,denyAnimations=True},Cmd.none)
       Result ->

@@ -4,5 +4,6 @@ from . import views
 urlpatterns = [
 	       path('addUser/', views.addUser, name='userauthapp-addUser'),
 	       path('loginUser/', views.login_user, name='userauthapp-login_user'),
-	       path('requestPoints/',views.player_info,name='userauthapp-requestPoints')
+	       path('requestPoints/',views.player_info,name='userauthapp-requestPoints'),
+	       path('roulettePoints/',views.points_info,name='userauthapp-roulettePoints')
 ]

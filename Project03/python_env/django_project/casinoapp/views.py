@@ -38,10 +38,17 @@ def player_info(request):
 	if not request.user.is_authenticated:
 		return HttpResponse("Logged out")
 	else:
-	#For DEBUG	response={'username':'admin','points':450,'error':'Success'}
 			response={}
 			response['username']=request.user.username
 			user_id=request.user.id
 			response['points']=Player.objects.filter(user_id=user_id).first().points
 			response['error']="Success"
 			return JsonResponse(response)
+def points_info(request):
+	if not request.user.is_authenticated:
+		return HttpResponse("Logged out")
+	else:
+		user_id=request.user.id
+		points=Player.objects.filter(user_id=user_id).first().points
+		strPoints=str(points)
+		return HttpResponse(strPoints)
