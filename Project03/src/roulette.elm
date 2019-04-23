@@ -79,9 +79,9 @@ update msg model =
       Back ->
         if model.denyAnimations then (model,Cmd.none) else (model,load "http://mac1xa3.ca/e/milanovn/static/game_menu.html")
       Increment amount -> let i = model.betAmount
-                   in  if model.denyAnimations then (model,Cmd.none) else ({model | betAmount = amount + i},Cmd.none)
+                   in  if model.denyAnimations then (model,Cmd.none) else if model.betAmount>=model.points then (model,Cmd.none) else ({model | betAmount = amount + i},Cmd.none)
       Decrement amount -> let i = model.betAmount
-                   in if model.denyAnimations then (model,Cmd.none) else ({model | betAmount = i-amount},Cmd.none)
+                   in if model.denyAnimations then (model,Cmd.none) else if model.betAmount<=0 then (model,Cmd.none) else ({model | betAmount = i-amount},Cmd.none)
       --Random
       GenerateRandom -> if model.denyAnimations then (model,Cmd.none) else (model,Random.generate GetRandom (Random.float 0 360))
       GetRandom randomFloat -> ({model |random=randomFloat},Cmd.none)

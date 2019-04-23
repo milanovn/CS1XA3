@@ -9699,19 +9699,19 @@ var author$project$Main$update = F2(
 				case 'Increment':
 					var amount = msg.a;
 					var i = model.betAmount;
-					return model.denyAnimations ? _Utils_Tuple2(model, elm$core$Platform$Cmd$none) : _Utils_Tuple2(
+					return model.denyAnimations ? _Utils_Tuple2(model, elm$core$Platform$Cmd$none) : ((_Utils_cmp(model.betAmount, model.points) > -1) ? _Utils_Tuple2(model, elm$core$Platform$Cmd$none) : _Utils_Tuple2(
 						_Utils_update(
 							model,
 							{betAmount: amount + i}),
-						elm$core$Platform$Cmd$none);
+						elm$core$Platform$Cmd$none));
 				case 'Decrement':
 					var amount = msg.a;
 					var i = model.betAmount;
-					return model.denyAnimations ? _Utils_Tuple2(model, elm$core$Platform$Cmd$none) : _Utils_Tuple2(
+					return model.denyAnimations ? _Utils_Tuple2(model, elm$core$Platform$Cmd$none) : ((model.betAmount <= 0) ? _Utils_Tuple2(model, elm$core$Platform$Cmd$none) : _Utils_Tuple2(
 						_Utils_update(
 							model,
 							{betAmount: i - amount}),
-						elm$core$Platform$Cmd$none);
+						elm$core$Platform$Cmd$none));
 				case 'GenerateRandom':
 					return model.denyAnimations ? _Utils_Tuple2(model, elm$core$Platform$Cmd$none) : _Utils_Tuple2(
 						model,

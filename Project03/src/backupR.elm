@@ -5,6 +5,9 @@ import Browser.Navigation exposing (Key(..),load)
 import Url
 import Debug
 import Random
+import Http
+import Json.Decode as JDecode
+import String
 
 main : AppWithTick () Model Msg
 main =
@@ -24,11 +27,19 @@ type Msg
  | Decrement Int
  | GenerateRandom
  | GetRandom Float
+ | GetPoints (Result Http.Error String)
 
 type alias Model = {rotate:Bool,rotateAmount:Float,time:Float,points:Int,betAmount:Int,random:Float,rootAngle:Int,betColor:Int,denyAnimations:Bool}
 
 init : () -> Url.Url -> Key -> (Model, Cmd Msg)
-init flags url key = ({rotate=False,rotateAmount=0,time=0.0,points=0,betAmount=0,random=0.0,rootAngle=0,betColor=0,denyAnimations=False}, Cmd.none)
+init flags url key = ({rotate=False,rotateAmount=0,time=0.0,points=0,betAmount=0,random=0.0,rootAngle=0,betColor=0,denyAnimations=False},requestInfo {rotate=False,rotateAmount=0,time=0.0,points=0,betAmount=0,random=0.0,rootAngle=0,betColor=0,denyAnimations=False})
+
+requestInfo : Model -> Cmd Msg
+requestInfo model = Http.get{url="https://mac1xa3.ca/e/milanovn/casinoapp/roulettePoints/"
+                            ,expect=Http.expectString GetPoints}
+convertPoints arg = case (String.toInt(arg)) of
+                    Just a -> a
+                    Nothing -> 0
 
 view : Model -> {title: String, body : Collage Msg}
 view model = {title="roulette",body = body model.rotateAmount 350 model.points model.betAmount model.rootAngle} --On server create a custom url and view to retrieve points.
@@ -48,7 +59,9 @@ update msg model =
 
       UrlChange url ->
           ( model, Cmd.none )
-
+      GetPoints result -> case result of
+                          Ok response -> ({model|points=convertPoints response},Cmd.none)
+                          Err error -> (model,Cmd.none)
       Spin ->
         if model.denyAnimations then (model,Cmd.none) else ({model|rotate=True,time=0.0,denyAnimations=True},Cmd.none)
       Result ->
@@ -66,9 +79,9 @@ update msg model =
       Back ->
         if model.denyAnimations then (model,Cmd.none) else (model,load "http://mac1xa3.ca/e/milanovn/static/game_menu.html")
       Increment amount -> let i = model.betAmount
-                   in  if model.denyAnimations then (model,Cmd.none) else ({model | betAmount = amount + i},Cmd.none)
+                   in  if model.denyAnimations then (model,Cmd.none) else if model.betAmount>=model.points then (model,Cmd.none) else ({model | betAmount = amount + i},Cmd.none)
       Decrement amount -> let i = model.betAmount
-                   in if model.denyAnimations then (model,Cmd.none) else ({model | betAmount = i-amount},Cmd.none)
+                   in if model.denyAnimations then (model,Cmd.none) else if model.betAmount<=0 then (model,Cmd.none) else ({model | betAmount = i-amount},Cmd.none)
       --Random
       GenerateRandom -> if model.denyAnimations then (model,Cmd.none) else (model,Random.generate GetRandom (Random.float 0 360))
       GetRandom randomFloat -> ({model |random=randomFloat},Cmd.none)
