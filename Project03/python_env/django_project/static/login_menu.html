@@ -6265,17 +6265,19 @@ var author$project$Main$UpdateName = function (a) {
 var author$project$Main$UpdatePassword = function (a) {
 	return {$: 'UpdatePassword', a: a};
 };
-var elm$html$Html$button = _VirtualDom_node('button');
-var elm$html$Html$div = _VirtualDom_node('div');
-var elm$html$Html$h1 = _VirtualDom_node('h1');
-var elm$html$Html$h2 = _VirtualDom_node('h2');
-var elm$html$Html$h3 = _VirtualDom_node('h3');
-var elm$html$Html$h4 = _VirtualDom_node('h4');
-var elm$html$Html$img = _VirtualDom_node('img');
-var elm$html$Html$input = _VirtualDom_node('input');
-var elm$html$Html$p = _VirtualDom_node('p');
-var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
-var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
+var elm$virtual_dom$VirtualDom$node = function (tag) {
+	return _VirtualDom_node(
+		_VirtualDom_noScript(tag));
+};
+var elm$html$Html$node = elm$virtual_dom$VirtualDom$node;
+var elm$virtual_dom$VirtualDom$attribute = F2(
+	function (key, value) {
+		return A2(
+			_VirtualDom_attribute,
+			_VirtualDom_noOnOrFormAction(key),
+			_VirtualDom_noJavaScriptOrHtmlUri(value));
+	});
+var elm$html$Html$Attributes$attribute = elm$virtual_dom$VirtualDom$attribute;
 var elm$html$Html$Attributes$stringProperty = F2(
 	function (key, string) {
 		return A2(
@@ -6283,6 +6285,30 @@ var elm$html$Html$Attributes$stringProperty = F2(
 			key,
 			elm$json$Json$Encode$string(string));
 	});
+var elm$html$Html$Attributes$href = function (url) {
+	return A2(
+		elm$html$Html$Attributes$stringProperty,
+		'href',
+		_VirtualDom_noJavaScriptUri(url));
+};
+var author$project$Main$stylesheet = A3(
+	elm$html$Html$node,
+	'link',
+	_List_fromArray(
+		[
+			A2(elm$html$Html$Attributes$attribute, 'rel', 'stylesheet'),
+			elm$html$Html$Attributes$href('assets/login.css')
+		]),
+	_List_Nil);
+var elm$html$Html$button = _VirtualDom_node('button');
+var elm$html$Html$div = _VirtualDom_node('div');
+var elm$html$Html$h1 = _VirtualDom_node('h1');
+var elm$html$Html$h2 = _VirtualDom_node('h2');
+var elm$html$Html$img = _VirtualDom_node('img');
+var elm$html$Html$input = _VirtualDom_node('input');
+var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
+var elm$html$Html$Attributes$class = elm$html$Html$Attributes$stringProperty('className');
 var elm$html$Html$Attributes$placeholder = elm$html$Html$Attributes$stringProperty('placeholder');
 var elm$html$Html$Attributes$src = function (url) {
 	return A2(
@@ -6290,7 +6316,7 @@ var elm$html$Html$Attributes$src = function (url) {
 		'src',
 		_VirtualDom_noJavaScriptOrHtmlUri(url));
 };
-var elm$html$Html$Attributes$value = elm$html$Html$Attributes$stringProperty('value');
+var elm$html$Html$Attributes$type_ = elm$html$Html$Attributes$stringProperty('type');
 var elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 'Normal', a: a};
 };
@@ -6347,99 +6373,94 @@ var author$project$Main$view = function (model) {
 		_List_Nil,
 		_List_fromArray(
 			[
+				author$project$Main$stylesheet,
 				A2(
-				elm$html$Html$h1,
-				_List_Nil,
+				elm$html$Html$div,
 				_List_fromArray(
 					[
-						elm$html$Html$text('Welcome to the Madhouse Casino!')
-					])),
-				A2(
-				elm$html$Html$img,
-				_List_fromArray(
-					[
-						elm$html$Html$Attributes$src('xqcM.png')
-					]),
-				_List_Nil),
-				A2(
-				elm$html$Html$p,
-				_List_Nil,
-				_List_fromArray(
-					[
-						elm$html$Html$text('Currently our games available include roullete.')
-					])),
-				A2(
-				elm$html$Html$h2,
-				_List_Nil,
-				_List_fromArray(
-					[
-						elm$html$Html$text('Rules for Roulette:')
-					])),
-				A2(
-				elm$html$Html$p,
-				_List_Nil,
-				_List_fromArray(
-					[
-						elm$html$Html$text('This roulette game does not include numbers, simply place your bet on either black, red or green. Red and black will double your bet and green will quadruple your bet.')
-					])),
-				A2(
-				elm$html$Html$h3,
-				_List_Nil,
-				_List_fromArray(
-					[
-						elm$html$Html$text('Login to have fun!')
-					])),
-				A2(
-				elm$html$Html$input,
-				_List_fromArray(
-					[
-						elm$html$Html$Attributes$placeholder('Username'),
-						elm$html$Html$Attributes$value(model.username),
-						elm$html$Html$Events$onInput(author$project$Main$UpdateName)
-					]),
-				_List_Nil),
-				A2(
-				elm$html$Html$input,
-				_List_fromArray(
-					[
-						elm$html$Html$Attributes$placeholder('Password'),
-						elm$html$Html$Attributes$value(model.password),
-						elm$html$Html$Events$onInput(author$project$Main$UpdatePassword)
-					]),
-				_List_Nil),
-				A2(
-				elm$html$Html$button,
-				_List_fromArray(
-					[
-						elm$html$Html$Events$onClick(author$project$Main$Login)
+						elm$html$Html$Attributes$class('title')
 					]),
 				_List_fromArray(
 					[
-						elm$html$Html$text('Submit')
+						A2(
+						elm$html$Html$h1,
+						_List_Nil,
+						_List_fromArray(
+							[
+								elm$html$Html$text('Welcome to our casino! Login/Create an account to get started.')
+							]))
 					])),
 				A2(
-				elm$html$Html$button,
+				elm$html$Html$div,
 				_List_fromArray(
 					[
-						elm$html$Html$Events$onClick(author$project$Main$CreateUser)
+						elm$html$Html$Attributes$class('image')
 					]),
 				_List_fromArray(
 					[
-						elm$html$Html$text('Create User')
+						A2(
+						elm$html$Html$img,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$src('assets/poker.jpg')
+							]),
+						_List_Nil)
 					])),
 				A2(
-				elm$html$Html$h4,
-				_List_Nil,
+				elm$html$Html$div,
 				_List_fromArray(
 					[
-						elm$html$Html$text('DEBUG: ' + (model.username + ('      ' + model.password)))
-					])),
-				A2(
-				elm$html$Html$h4,
-				_List_Nil,
+						elm$html$Html$Attributes$class('login')
+					]),
 				_List_fromArray(
 					[
-						elm$html$Html$text(model.error)
+						A2(
+						elm$html$Html$h2,
+						_List_Nil,
+						_List_fromArray(
+							[
+								elm$html$Html$text('Sign in')
+							])),
+						A2(
+						elm$html$Html$input,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$placeholder('Username'),
+								elm$html$Html$Attributes$type_('text'),
+								elm$html$Html$Events$onInput(author$project$Main$UpdateName)
+							]),
+						_List_Nil),
+						A2(
+						elm$html$Html$input,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$type_('password'),
+								elm$html$Html$Attributes$placeholder('Password'),
+								elm$html$Html$Events$onInput(author$project$Main$UpdatePassword)
+							]),
+						_List_Nil),
+						A2(
+						elm$html$Html$button,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$type_('submit'),
+								elm$html$Html$Events$onClick(author$project$Main$Login)
+							]),
+						_List_fromArray(
+							[
+								elm$html$Html$text('Sign in')
+							])),
+						A2(
+						elm$html$Html$button,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$type_('submit'),
+								elm$html$Html$Events$onClick(author$project$Main$CreateUser)
+							]),
+						_List_fromArray(
+							[
+								elm$html$Html$text('Create user')
+							]))
 					]))
 			]));
 };
