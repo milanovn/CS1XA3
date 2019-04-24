@@ -13,7 +13,8 @@ type alias Model = {username:String, points:Int,error:String}
 
 type Msg = LoadRoullete
            | InfoResponse (Result Http.Error Model)
-           | Ask
+           | Logout
+           | LogoutResponse(Result Http.Error String)
 init : () -> (Model,Cmd Msg)
 init _ = ({username="",points=0,error=""},requestInfo)
 
@@ -23,18 +24,23 @@ update msg model = case msg of
                         InfoResponse result -> case result of
                                                Ok updatedModel -> (updatedModel,Cmd.none)
                                                Err error -> (handleError model error,Cmd.none)
-                        Ask -> (model,requestInfo)
+                        Logout -> (model,logout)
+                        LogoutResponse result -> case result of
+                                          Ok "Successfully Logged Out" -> (model,load "http://mac1xa3.ca/e/milanovn/static/login_menu.html")
+                                          Ok _                         -> (model,Cmd.none)
+                                          Err error -> (model,Cmd.none)
 view : Model -> Html Msg
 view model = div [] [h1 [] [text ("Welcome " ++ model.username ++ ". You have " ++ toString(model.points) ++ " points.")]
                     ,h2 [] [text "Play Roulette"] , button [onClick LoadRoullete] [text "Play Roulette"]
                     ,h2 [] [text "Play Other Game"], button [onClick LoadRoullete] [text "Play Other Game"]
-                    ,button [onClick Ask] [text model.username]
-                    ,h1 [] [text model.error]
+                    ,button [onClick Logout] [text "Logout"]
                     ]
 requestInfo : Cmd Msg
 requestInfo = Http.get{url="https://mac1xa3.ca/e/milanovn/casinoapp/requestPoints/",
                        expect = Http.expectJson InfoResponse modelDecoder}
-
+logout : Cmd Msg
+logout = Http.get{url="https://mac1xa3.ca/e/milanovn/casinoapp/logout/",
+                       expect = Http.expectString LogoutResponse}
 modelDecoder : JDecode.Decoder Model
 modelDecoder = JDecode.map3 Model
   (JDecode.field "username" JDecode.string)

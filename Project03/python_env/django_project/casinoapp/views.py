@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login,logout
 import json
 from .models import Player
 def addUser (request):
@@ -64,3 +64,6 @@ def updatePoints(request):
 			return HttpResponse(body.get("points",""))
 		else:
 			return HttpResponse("Did not update ")
+def logout_view(request):
+	logout(request)
+	return HttpResponse("Successfully Logged Out")

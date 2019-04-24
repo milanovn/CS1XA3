@@ -5908,6 +5908,20 @@ var author$project$Main$handleError = F2(
 					{error: 'bad body ' + body});
 		}
 	});
+var author$project$Main$LogoutResponse = function (a) {
+	return {$: 'LogoutResponse', a: a};
+};
+var elm$http$Http$expectString = function (toMsg) {
+	return A2(
+		elm$http$Http$expectStringResponse,
+		toMsg,
+		elm$http$Http$resolve(elm$core$Result$Ok));
+};
+var author$project$Main$logout = elm$http$Http$get(
+	{
+		expect: elm$http$Http$expectString(author$project$Main$LogoutResponse),
+		url: 'https://mac1xa3.ca/e/milanovn/casinoapp/logout/'
+	});
 var elm$browser$Browser$External = function (a) {
 	return {$: 'External', a: a};
 };
@@ -6159,12 +6173,26 @@ var author$project$Main$update = F2(
 						A2(author$project$Main$handleError, model, error),
 						elm$core$Platform$Cmd$none);
 				}
+			case 'Logout':
+				return _Utils_Tuple2(model, author$project$Main$logout);
 			default:
-				return _Utils_Tuple2(model, author$project$Main$requestInfo);
+				var result = msg.a;
+				if (result.$ === 'Ok') {
+					if (result.a === 'Successfully Logged Out') {
+						return _Utils_Tuple2(
+							model,
+							elm$browser$Browser$Navigation$load('http://mac1xa3.ca/e/milanovn/static/login_menu.html'));
+					} else {
+						return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+					}
+				} else {
+					var error = result.a;
+					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+				}
 		}
 	});
-var author$project$Main$Ask = {$: 'Ask'};
 var author$project$Main$LoadRoullete = {$: 'LoadRoullete'};
+var author$project$Main$Logout = {$: 'Logout'};
 var elm$core$Debug$toString = _Debug_toString;
 var elm$html$Html$button = _VirtualDom_node('button');
 var elm$html$Html$div = _VirtualDom_node('div');
@@ -6241,18 +6269,11 @@ var author$project$Main$view = function (model) {
 				elm$html$Html$button,
 				_List_fromArray(
 					[
-						elm$html$Html$Events$onClick(author$project$Main$Ask)
+						elm$html$Html$Events$onClick(author$project$Main$Logout)
 					]),
 				_List_fromArray(
 					[
-						elm$html$Html$text(model.username)
-					])),
-				A2(
-				elm$html$Html$h1,
-				_List_Nil,
-				_List_fromArray(
-					[
-						elm$html$Html$text(model.error)
+						elm$html$Html$text('Logout')
 					]))
 			]));
 };
