@@ -52,3 +52,15 @@ def points_info(request):
 		points=Player.objects.filter(user_id=user_id).first().points
 		strPoints=str(points)
 		return HttpResponse(strPoints)
+def updatePoints(request):
+	if not request.user.is_authenticated:
+		return HttpResponse("Logged out")
+	else:
+		user_id=request.user.id
+		body=request.POST
+		user_points=int(body.get("points",""))
+		if type(user_points)==int and user_points is not None:
+			Player.objects.filter(user_id=user_id).update(points=user_points)
+			return HttpResponse(body.get("points",""))
+		else:
+			return HttpResponse("Did not update ")

@@ -28,21 +28,27 @@ type Msg
  | GenerateRandom
  | GetRandom Float
  | GetPoints (Result Http.Error String)
+ | DoNothing (Result Http.Error String)
+ | SyncPoints
 
 type alias Model = {rotate:Bool,rotateAmount:Float,time:Float,points:Int,betAmount:Int,random:Float,rootAngle:Int,betColor:Int,denyAnimations:Bool}
 
 init : () -> Url.Url -> Key -> (Model, Cmd Msg)
-init flags url key = ({rotate=False,rotateAmount=0,time=0.0,points=0,betAmount=0,random=0.0,rootAngle=0,betColor=0,denyAnimations=False},requestInfo {rotate=False,rotateAmount=0,time=0.0,points=0,betAmount=0,random=0.0,rootAngle=0,betColor=0,denyAnimations=False})
+init flags url key = ({rotate=False,rotateAmount=0,time=0.0,points=0,betAmount=0,random=0.0,rootAngle=0,betColor=0,denyAnimations=False},requestInfo)
 
-requestInfo : Model -> Cmd Msg
-requestInfo model = Http.get{url="https://mac1xa3.ca/e/milanovn/casinoapp/roulettePoints/"
+requestInfo :Cmd Msg
+requestInfo = Http.get{url="https://mac1xa3.ca/e/milanovn/casinoapp/roulettePoints/"
                             ,expect=Http.expectString GetPoints}
 convertPoints arg = case (String.toInt(arg)) of
                     Just a -> a
                     Nothing -> 0
+sendUpdate : Int -> Cmd Msg
+sendUpdate points = Http.post{url="https://mac1xa3.ca/e/milanovn/casinoapp/updatePoints/",
+                              body = Http.stringBody "application/x-www-form-urlencoded" ("points="++Debug.toString points),
+                              expect=Http.expectString DoNothing}
 
 view : Model -> {title: String, body : Collage Msg}
-view model = {title="roulette",body = body model.rotateAmount 350 model.points model.betAmount model.rootAngle} --On server create a custom url and view to retrieve points.
+view model = {title="roulette",body = body model.rotateAmount 350 model.points model.betAmount} --On server create a custom url and view to retrieve points.
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -59,16 +65,19 @@ update msg model =
 
       UrlChange url ->
           ( model, Cmd.none )
+      DoNothing result -> (model,Cmd.none)
+      SyncPoints -> (model,sendUpdate model.points)
       GetPoints result -> case result of
+                          Ok "Logged out" -> (model,Cmd.none)
                           Ok response -> ({model|points=convertPoints response},Cmd.none)
                           Err error -> (model,Cmd.none)
       Spin ->
         if model.denyAnimations then (model,Cmd.none) else ({model|rotate=True,time=0.0,denyAnimations=True},Cmd.none)
       Result ->
         case (colorLanded model.rootAngle) of
-          0 -> if model.betColor==0 then ({model|points=model.points+model.betAmount},Cmd.none) else ({model|points=model.points-model.betAmount},Cmd.none)
-          1 -> if model.betColor==1 then ({model|points=model.points+model.betAmount},Cmd.none) else ({model|points=model.points-model.betAmount},Cmd.none)
-          2 -> if model.betColor==2 then ({model|points=model.points+(model.betAmount*4)},Cmd.none) else ({model|points=model.points-model.betAmount},Cmd.none)
+          0 -> if model.betColor==0 then (update SyncPoints {model|points=model.points+model.betAmount}) else (update SyncPoints {model|points=model.points-model.betAmount})
+          1 -> if model.betColor==1 then (update SyncPoints {model|points=model.points+model.betAmount}) else (update SyncPoints {model|points=model.points-model.betAmount})
+          2 -> if model.betColor==2 then (update SyncPoints {model|points=model.points+(model.betAmount*4)}) else (update SyncPoints {model|points=model.points-model.betAmount})
           _ -> (model,Cmd.none)
       Black ->
         ({model|betColor=0},Cmd.none)
@@ -79,7 +88,7 @@ update msg model =
       Back ->
         if model.denyAnimations then (model,Cmd.none) else (model,load "http://mac1xa3.ca/e/milanovn/static/game_menu.html")
       Increment amount -> let i = model.betAmount
-                   in  if model.denyAnimations then (model,Cmd.none) else if model.betAmount>=model.points then (model,Cmd.none) else ({model | betAmount = amount + i},Cmd.none)
+                   in  if model.denyAnimations then (model,Cmd.none) else if  model.points<=100 then (model,Cmd.none) else if model.betAmount>=model.points then (model,Cmd.none) else ({model | betAmount = amount + i},Cmd.none)
       Decrement amount -> let i = model.betAmount
                    in if model.denyAnimations then (model,Cmd.none) else if model.betAmount<=0 then (model,Cmd.none) else ({model | betAmount = i-amount},Cmd.none)
       --Random
@@ -92,12 +101,12 @@ colorLanded : Int -> Int
 colorLanded rootAngle = let argument = 90 - (modBy 90 rootAngle)
                         in if rootAngle+90>=247&&rootAngle+90<=270 then 2 else if argument >=(0)&&argument<=22 then 0 else if argument>22&&argument<=45 then 1 else if argument>45&&argument<=67 then 0 else if argument>67&&argument<=90 then 1 else 2
 
-body ro crSize points betAmount rootAngle = collage 1000 1000 [wedge crSize 0.0625 |> filled black |> rotate (degrees 0 + (degrees (ro+11.25))),wedge crSize 0.0625 |> filled red |> rotate (degrees 22.5 + (degrees (ro+11.25))),wedge crSize 0.0625 |> filled black |> rotate (degrees 45 + (degrees (ro+11.25)))
+body ro crSize points betAmount = collage 1000 1000 [wedge crSize 0.0625 |> filled black |> rotate (degrees 0 + (degrees (ro+11.25))),wedge crSize 0.0625 |> filled red |> rotate (degrees 22.5 + (degrees (ro+11.25))),wedge crSize 0.0625 |> filled black |> rotate (degrees 45 + (degrees (ro+11.25)))
                          ,wedge crSize 0.0625 |> filled red |> rotate (degrees 67.5 + (degrees (ro+11.25))),wedge crSize 0.0625 |> filled black |> rotate (degrees 90 + (degrees (ro+11.25)))
                          ,wedge crSize 0.0625 |> filled red |> rotate (degrees 112.5 + (degrees (ro+11.25))),wedge crSize 0.0625 |> filled black |> rotate (degrees 135+(degrees (ro+11.25))),wedge crSize 0.0625 |> filled red |> rotate (degrees 157.5+(degrees (ro+11.25))),wedge crSize 0.0625 |> filled black |> rotate (degrees 180+(degrees (ro+11.25))),wedge crSize 0.0625 |> filled red |> rotate (degrees 202.5+(degrees (ro+11.25)))
                          ,wedge crSize 0.0625 |> filled black |> rotate (degrees 225+(degrees (ro+11.25))),wedge crSize 0.0625 |> filled red |> rotate (degrees 247.5+(degrees (ro+11.25))),wedge crSize 0.0625 |> filled darkGreen |> rotate (degrees 270+(degrees (ro+11.25))),wedge crSize 0.0625 |> filled red |> rotate (degrees 292.5+(degrees (ro+11.25))),wedge crSize 0.0625 |> filled black |> rotate (degrees 315+(degrees (ro+11.25)))
                          ,wedge crSize 0.0625 |> filled red |> rotate (degrees 337.5+(degrees (ro+11.25))),circle 10 |> filled black,openPolygon [(-25,crSize),(25,crSize),(0,300)] |> filled blue,rouletteButtons,rect 150 50 |> filled grey |> move(0,-400) |> notifyTap Back |> addOutline (solid 3) black, text "Back" |> size 36 |> filled black |> move (-35,-405)
-                         ,text ("Points: " ++ Debug.toString(points)++"  "++Debug.toString(rootAngle)) |> size 36 |> filled blue |> addOutline (solid 0.5) black |> move (200,340)
+                         ,text ("Points: " ++ Debug.toString(points)) |> size 36 |> filled blue |> addOutline (solid 0.5) black |> move (200,340)
                          ,betButtons betAmount |> move (-125,390)
                          ]
 --Group text and back rectangle together to fix bug.

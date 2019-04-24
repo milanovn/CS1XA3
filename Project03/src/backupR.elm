@@ -28,6 +28,7 @@ type Msg
  | GenerateRandom
  | GetRandom Float
  | GetPoints (Result Http.Error String)
+ | DoNothing (Result Http.Error String)
 
 type alias Model = {rotate:Bool,rotateAmount:Float,time:Float,points:Int,betAmount:Int,random:Float,rootAngle:Int,betColor:Int,denyAnimations:Bool}
 
@@ -40,6 +41,10 @@ requestInfo model = Http.get{url="https://mac1xa3.ca/e/milanovn/casinoapp/roulet
 convertPoints arg = case (String.toInt(arg)) of
                     Just a -> a
                     Nothing -> 0
+sendUpdate : Int -> Cmd Msg
+sendUpdate points = Http.post{url="https://mac1xa3.ca/e/milanovn/casinoapp/updatePoints/",
+                              body = Http.stringBody "application/x-www-form-urlencoded" ("points="++Debug.toString points),
+                              expect=Http.expectString DoNothing}
 
 view : Model -> {title: String, body : Collage Msg}
 view model = {title="roulette",body = body model.rotateAmount 350 model.points model.betAmount model.rootAngle} --On server create a custom url and view to retrieve points.
@@ -59,16 +64,21 @@ update msg model =
 
       UrlChange url ->
           ( model, Cmd.none )
+      DoNothing result -> case result of
+                          Ok "Logged out" -> ({model|points=-1},Cmd.none)
+                          Ok _            -> ({model|points=-2},Cmd.none)
+                          Err error             -> ({model|points=111111},Cmd.none)
       GetPoints result -> case result of
+                          Ok "Logged out" -> (model,Cmd.none)
                           Ok response -> ({model|points=convertPoints response},Cmd.none)
                           Err error -> (model,Cmd.none)
       Spin ->
         if model.denyAnimations then (model,Cmd.none) else ({model|rotate=True,time=0.0,denyAnimations=True},Cmd.none)
       Result ->
         case (colorLanded model.rootAngle) of
-          0 -> if model.betColor==0 then ({model|points=model.points+model.betAmount},Cmd.none) else ({model|points=model.points-model.betAmount},Cmd.none)
-          1 -> if model.betColor==1 then ({model|points=model.points+model.betAmount},Cmd.none) else ({model|points=model.points-model.betAmount},Cmd.none)
-          2 -> if model.betColor==2 then ({model|points=model.points+(model.betAmount*4)},Cmd.none) else ({model|points=model.points-model.betAmount},Cmd.none)
+          0 -> if model.betColor==0 then ({model|points=model.points+model.betAmount},sendUpdate model.points) else ({model|points=model.points-model.betAmount},sendUpdate model.points)
+          1 -> if model.betColor==1 then ({model|points=model.points+model.betAmount},sendUpdate model.points) else ({model|points=model.points-model.betAmount},sendUpdate model.points)
+          2 -> if model.betColor==2 then ({model|points=model.points+(model.betAmount*4)},sendUpdate model.points) else ({model|points=model.points-model.betAmount},sendUpdate model.points)
           _ -> (model,Cmd.none)
       Black ->
         ({model|betColor=0},Cmd.none)
@@ -79,7 +89,7 @@ update msg model =
       Back ->
         if model.denyAnimations then (model,Cmd.none) else (model,load "http://mac1xa3.ca/e/milanovn/static/game_menu.html")
       Increment amount -> let i = model.betAmount
-                   in  if model.denyAnimations then (model,Cmd.none) else if model.betAmount>=model.points then (model,Cmd.none) else ({model | betAmount = amount + i},Cmd.none)
+                   in  if model.denyAnimations then (model,Cmd.none) else if  model.points<=100 then (model,Cmd.none) else if model.betAmount>=model.points then (model,Cmd.none) else ({model | betAmount = amount + i},Cmd.none)
       Decrement amount -> let i = model.betAmount
                    in if model.denyAnimations then (model,Cmd.none) else if model.betAmount<=0 then (model,Cmd.none) else ({model | betAmount = i-amount},Cmd.none)
       --Random

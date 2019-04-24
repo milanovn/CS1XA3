@@ -9416,19 +9416,16 @@ var elm$http$Http$get = function (r) {
 	return elm$http$Http$request(
 		{body: elm$http$Http$emptyBody, expect: r.expect, headers: _List_Nil, method: 'GET', timeout: elm$core$Maybe$Nothing, tracker: elm$core$Maybe$Nothing, url: r.url});
 };
-var author$project$Main$requestInfo = function (model) {
-	return elm$http$Http$get(
-		{
-			expect: elm$http$Http$expectString(author$project$Main$GetPoints),
-			url: 'https://mac1xa3.ca/e/milanovn/casinoapp/roulettePoints/'
-		});
-};
+var author$project$Main$requestInfo = elm$http$Http$get(
+	{
+		expect: elm$http$Http$expectString(author$project$Main$GetPoints),
+		url: 'https://mac1xa3.ca/e/milanovn/casinoapp/roulettePoints/'
+	});
 var author$project$Main$init = F3(
 	function (flags, url, key) {
 		return _Utils_Tuple2(
 			{betAmount: 0, betColor: 0, denyAnimations: false, points: 0, random: 0.0, rootAngle: 0, rotate: false, rotateAmount: 0, time: 0.0},
-			author$project$Main$requestInfo(
-				{betAmount: 0, betColor: 0, denyAnimations: false, points: 0, random: 0.0, rootAngle: 0, rotate: false, rotateAmount: 0, time: 0.0}));
+			author$project$Main$requestInfo);
 	});
 var elm$core$Platform$Sub$none = elm$core$Platform$Sub$batch(_List_Nil);
 var author$project$Main$subscriptions = function (model) {
@@ -9438,6 +9435,7 @@ var author$project$Main$GetRandom = function (a) {
 	return {$: 'GetRandom', a: a};
 };
 var author$project$Main$Result = {$: 'Result'};
+var author$project$Main$SyncPoints = {$: 'SyncPoints'};
 var elm$core$Basics$ge = _Utils_ge;
 var author$project$Main$colorLanded = function (rootAngle) {
 	var argument = 90 - A2(elm$core$Basics$modBy, 90, rootAngle);
@@ -9451,6 +9449,26 @@ var author$project$Main$convertPoints = function (arg) {
 	} else {
 		return 0;
 	}
+};
+var author$project$Main$DoNothing = function (a) {
+	return {$: 'DoNothing', a: a};
+};
+var elm$core$Debug$toString = _Debug_toString;
+var elm$http$Http$post = function (r) {
+	return elm$http$Http$request(
+		{body: r.body, expect: r.expect, headers: _List_Nil, method: 'POST', timeout: elm$core$Maybe$Nothing, tracker: elm$core$Maybe$Nothing, url: r.url});
+};
+var elm$http$Http$stringBody = _Http_pair;
+var author$project$Main$sendUpdate = function (points) {
+	return elm$http$Http$post(
+		{
+			body: A2(
+				elm$http$Http$stringBody,
+				'application/x-www-form-urlencoded',
+				'points=' + elm$core$Debug$toString(points)),
+			expect: elm$http$Http$expectString(author$project$Main$DoNothing),
+			url: 'https://mac1xa3.ca/e/milanovn/casinoapp/updatePoints/'
+		});
 };
 var elm$browser$Browser$Navigation$load = _Browser_load;
 var elm$core$Basics$abs = function (n) {
@@ -9617,17 +9635,28 @@ var author$project$Main$update = F2(
 				case 'UrlChange':
 					var url = msg.a;
 					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+				case 'DoNothing':
+					var result = msg.a;
+					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+				case 'SyncPoints':
+					return _Utils_Tuple2(
+						model,
+						author$project$Main$sendUpdate(model.points));
 				case 'GetPoints':
 					var result = msg.a;
 					if (result.$ === 'Ok') {
-						var response = result.a;
-						return _Utils_Tuple2(
-							_Utils_update(
-								model,
-								{
-									points: author$project$Main$convertPoints(response)
-								}),
-							elm$core$Platform$Cmd$none);
+						if (result.a === 'Logged out') {
+							return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+						} else {
+							var response = result.a;
+							return _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{
+										points: author$project$Main$convertPoints(response)
+									}),
+								elm$core$Platform$Cmd$none);
+						}
 					} else {
 						var error = result.a;
 						return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
@@ -9642,35 +9671,59 @@ var author$project$Main$update = F2(
 					var _n2 = author$project$Main$colorLanded(model.rootAngle);
 					switch (_n2) {
 						case 0:
-							return (!model.betColor) ? _Utils_Tuple2(
-								_Utils_update(
+							if (!model.betColor) {
+								var $temp$msg = author$project$Main$SyncPoints,
+									$temp$model = _Utils_update(
 									model,
-									{points: model.points + model.betAmount}),
-								elm$core$Platform$Cmd$none) : _Utils_Tuple2(
-								_Utils_update(
+									{points: model.points + model.betAmount});
+								msg = $temp$msg;
+								model = $temp$model;
+								continue update;
+							} else {
+								var $temp$msg = author$project$Main$SyncPoints,
+									$temp$model = _Utils_update(
 									model,
-									{points: model.points - model.betAmount}),
-								elm$core$Platform$Cmd$none);
+									{points: model.points - model.betAmount});
+								msg = $temp$msg;
+								model = $temp$model;
+								continue update;
+							}
 						case 1:
-							return (model.betColor === 1) ? _Utils_Tuple2(
-								_Utils_update(
+							if (model.betColor === 1) {
+								var $temp$msg = author$project$Main$SyncPoints,
+									$temp$model = _Utils_update(
 									model,
-									{points: model.points + model.betAmount}),
-								elm$core$Platform$Cmd$none) : _Utils_Tuple2(
-								_Utils_update(
+									{points: model.points + model.betAmount});
+								msg = $temp$msg;
+								model = $temp$model;
+								continue update;
+							} else {
+								var $temp$msg = author$project$Main$SyncPoints,
+									$temp$model = _Utils_update(
 									model,
-									{points: model.points - model.betAmount}),
-								elm$core$Platform$Cmd$none);
+									{points: model.points - model.betAmount});
+								msg = $temp$msg;
+								model = $temp$model;
+								continue update;
+							}
 						case 2:
-							return (model.betColor === 2) ? _Utils_Tuple2(
-								_Utils_update(
+							if (model.betColor === 2) {
+								var $temp$msg = author$project$Main$SyncPoints,
+									$temp$model = _Utils_update(
 									model,
-									{points: model.points + (model.betAmount * 4)}),
-								elm$core$Platform$Cmd$none) : _Utils_Tuple2(
-								_Utils_update(
+									{points: model.points + (model.betAmount * 4)});
+								msg = $temp$msg;
+								model = $temp$model;
+								continue update;
+							} else {
+								var $temp$msg = author$project$Main$SyncPoints,
+									$temp$model = _Utils_update(
 									model,
-									{points: model.points - model.betAmount}),
-								elm$core$Platform$Cmd$none);
+									{points: model.points - model.betAmount});
+								msg = $temp$msg;
+								model = $temp$model;
+								continue update;
+							}
 						default:
 							return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 					}
@@ -9699,11 +9752,11 @@ var author$project$Main$update = F2(
 				case 'Increment':
 					var amount = msg.a;
 					var i = model.betAmount;
-					return model.denyAnimations ? _Utils_Tuple2(model, elm$core$Platform$Cmd$none) : ((_Utils_cmp(model.betAmount, model.points) > -1) ? _Utils_Tuple2(model, elm$core$Platform$Cmd$none) : _Utils_Tuple2(
+					return model.denyAnimations ? _Utils_Tuple2(model, elm$core$Platform$Cmd$none) : ((model.points <= 100) ? _Utils_Tuple2(model, elm$core$Platform$Cmd$none) : ((_Utils_cmp(model.betAmount, model.points) > -1) ? _Utils_Tuple2(model, elm$core$Platform$Cmd$none) : _Utils_Tuple2(
 						_Utils_update(
 							model,
 							{betAmount: amount + i}),
-						elm$core$Platform$Cmd$none));
+						elm$core$Platform$Cmd$none)));
 				case 'Decrement':
 					var amount = msg.a;
 					var i = model.betAmount;
@@ -10173,7 +10226,6 @@ var author$project$Main$Decrement = function (a) {
 var author$project$Main$Increment = function (a) {
 	return {$: 'Increment', a: a};
 };
-var elm$core$Debug$toString = _Debug_toString;
 var author$project$Main$betButtons = function (betAmount) {
 	return MacCASOutreach$graphicsvg$GraphicSVG$group(
 		_List_fromArray(
@@ -10328,8 +10380,8 @@ var author$project$Main$rouletteButtons = A3(
 var elm$core$Basics$degrees = function (angleInDegrees) {
 	return (angleInDegrees * elm$core$Basics$pi) / 180;
 };
-var author$project$Main$body = F5(
-	function (ro, crSize, points, betAmount, rootAngle) {
+var author$project$Main$body = F4(
+	function (ro, crSize, points, betAmount) {
 		return A3(
 			MacCASOutreach$graphicsvg$GraphicSVG$collage,
 			1000,
@@ -10501,7 +10553,7 @@ var author$project$Main$body = F5(
 								MacCASOutreach$graphicsvg$GraphicSVG$size,
 								36,
 								MacCASOutreach$graphicsvg$GraphicSVG$text(
-									'Points: ' + (elm$core$Debug$toString(points) + ('  ' + elm$core$Debug$toString(rootAngle)))))))),
+									'Points: ' + elm$core$Debug$toString(points)))))),
 					A2(
 					MacCASOutreach$graphicsvg$GraphicSVG$move,
 					_Utils_Tuple2(-125, 390),
@@ -10510,7 +10562,7 @@ var author$project$Main$body = F5(
 	});
 var author$project$Main$view = function (model) {
 	return {
-		body: A5(author$project$Main$body, model.rotateAmount, 350, model.points, model.betAmount, model.rootAngle),
+		body: A4(author$project$Main$body, model.rotateAmount, 350, model.points, model.betAmount),
 		title: 'roulette'
 	};
 };
