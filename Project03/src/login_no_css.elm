@@ -42,7 +42,6 @@ update msg model = case msg of
                                                   Err error -> (handleError model error,Cmd.none)
 view : Model -> Html Msg
 view model = div [] [h1 [] [text "Welcome to the Madhouse Casino!"]
-                    ,img [src "xqcM.png"] []
                     ,p [] [text "Currently our games available include roullete."]
                     ,h2 [] [text "Rules for Roulette:"]
                     ,p [] [text "This roulette game does not include numbers, simply place your bet on either black, red or green. Red and black will double your bet and green will quadruple your bet."]

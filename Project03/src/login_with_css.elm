@@ -48,7 +48,7 @@ view : Model -> Html Msg
 view model = div [] [stylesheet,
                      div [class "title"] [h1 [] [text "Welcome to our casino! Login/Create an account to get started."]],div [class "image"] [img [src "assets/poker.jpg"] []],
                      div [class "login"] [h2 [] [text "Sign in"],input [placeholder "Username",type_ "text",onInput UpdateName] [],input [type_ "password",placeholder "Password",onInput UpdatePassword] [],button [type_ "submit",onClick Login] [text "Sign in"]
-                                         ,button [type_ "submit",onClick CreateUser] [text "Create user"]]
+                                         ,button [type_ "submit",onClick CreateUser] [text "Create user"],button [type_ "response"] [text model.error]]
                     ]
 
 createUserPost : Model -> Cmd Msg

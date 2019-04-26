@@ -95,17 +95,6 @@ button[type="submit"] {
 button[type="submit"]:hover {
   background: #16aa56;
 }
-button[type="response"] {
-  background: rgba(0,0,0,0.4);
-  border: 0;
-  width: 250px;
-  margin-bottom: 4px;
-  height: 40px;
-  border-radius: 3px;
-  color: red;
-  cursor: pointer;
-  transition: background 0.3s ease-in-out;
-}
 
 
 ::-webkit-input-placeholder {

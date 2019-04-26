@@ -6460,6 +6460,16 @@ var author$project$Main$view = function (model) {
 						_List_fromArray(
 							[
 								elm$html$Html$text('Create user')
+							])),
+						A2(
+						elm$html$Html$button,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$type_('response')
+							]),
+						_List_fromArray(
+							[
+								elm$html$Html$text(model.error)
 							]))
 					]))
 			]));
