@@ -12,6 +12,11 @@ Download ["Project03" directory](https://github.com/milanovn/CS1XA3/tree/master/
 **Python Virtual Environment Installations**
 See ["requirements.txt"](https://github.com/milanovn/CS1XA3/blob/master/Project03/requirements.txt) for virtual environment requirements.
 
+**Running on server**
+To run this code successfully on a server, make sure you install requirements with **pip install -r requirements.txt** in the Project03 folder.
+
+Navigate to **Project03/python_env/django_project/** and run the command **"python3 manage.py runserver localhost:[portnum]"** to get the Django Server running.
+
 ## Structure and Usage:
 This app consists of 3 (elm-generated) static html files named ***login_menu.hmtl*** ***game_menu.html*** and ***roulette.html***.
 
