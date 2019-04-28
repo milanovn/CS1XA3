@@ -16,20 +16,21 @@ type Msg = LoadRoullete
            | Logout
            | LogoutResponse(Result Http.Error String)
 init : () -> (Model,Cmd Msg)
-init _ = ({username="",points=0,error=""},requestInfo)
+init _ = ({username="",points=0,error=""},requestInfo) --Request username and points (also error) from server on load.
 
+--CSS stylesheet used for main_menu.
 stylesheet = node "link" [attribute "rel" "stylesheet",
                           href "assets/menu.css"]
                           []
 
 update : Msg -> Model -> (Model,Cmd Msg)
 update msg model = case msg of
-                        LoadRoullete -> (model,load "http://mac1xa3.ca/e/milanovn/static/roulette.html")
+                        LoadRoullete -> (model,load "http://mac1xa3.ca/e/milanovn/static/roulette.html") --redirect user to roulette app.
                         InfoResponse result -> case result of
                                                Ok updatedModel -> (updatedModel,Cmd.none)
                                                Err error -> (handleError model error,Cmd.none)
                         Logout -> (model,logout)
-                        LogoutResponse result -> case result of
+                        LogoutResponse result -> case result of --If no error with logging out, the user will be re-directed to the login_menu.
                                           Ok "Successfully Logged Out" -> (model,load "http://mac1xa3.ca/e/milanovn/static/login_menu.html")
                                           Ok _                         -> (model,Cmd.none)
                                           Err error -> (model,Cmd.none)
@@ -47,7 +48,7 @@ requestInfo = Http.get{url="https://mac1xa3.ca/e/milanovn/casinoapp/requestPoint
 logout : Cmd Msg
 logout = Http.get{url="https://mac1xa3.ca/e/milanovn/casinoapp/logout/",
                        expect = Http.expectString LogoutResponse}
-modelDecoder : JDecode.Decoder Model
+modelDecoder : JDecode.Decoder Model --Our model recieved from server has username, points, and error, this function decodes the json into an elm model.
 modelDecoder = JDecode.map3 Model
   (JDecode.field "username" JDecode.string)
   (JDecode.field "points" JDecode.int)
