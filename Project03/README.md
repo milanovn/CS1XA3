@@ -1,3 +1,6 @@
+**Accessible at: https://mac1xa3.ca/u/milanovn/project3.html**
+**OR**
+**https://mac1xa3.ca/e/milanovn/static/project3.html**
 ## Installation:
 **Elm installations**
 
@@ -16,6 +19,11 @@ See ["requirements.txt"](https://github.com/milanovn/CS1XA3/blob/master/Project0
 To run this code successfully on a server, make sure you install requirements with **pip install -r requirements.txt** in the Project03 folder.
 
 Navigate to **Project03/python_env/django_project/** and run the command **"python3 manage.py runserver localhost:[portnum]"** to get the Django Server running.
+
+**Note** that the elm files used in production are **login_with_css.elm**, **main_menu_css.elm**, and **roulette.elm**. 
+
+The elm files are **already converted into html** and placed in the **static directory.** However, should you wish to make changes to the elm files. You must navigate to **"Project03/"** and run the command **"elm make src/[filename]"**
+
 
 ## Structure and Usage:
 This app consists of 3 (elm-generated) static html files named ***login_menu.hmtl*** ***game_menu.html*** and ***roulette.html***.
